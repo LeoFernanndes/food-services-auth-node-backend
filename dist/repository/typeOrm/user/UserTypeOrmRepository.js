@@ -54,6 +54,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserTypeOrmRepository = void 0;
 var UserOutputDTO_1 = require("../../../dto/user/UserOutputDTO");
 var TypeOrmRepository_1 = require("../TypeOrmRepository");
+var UserDataClass_1 = require("../../../dto/user/UserDataClass");
+var NotFound_1 = require("../../../common/exceptions/NotFound");
 var UserTypeOrmRepository = /** @class */ (function (_super) {
     __extends(UserTypeOrmRepository, _super);
     function UserTypeOrmRepository(entity) {
@@ -68,6 +70,9 @@ var UserTypeOrmRepository = /** @class */ (function (_super) {
                     case 0: return [4 /*yield*/, this.repository.findOneBy({ id: id })];
                     case 1:
                         retrievedEntity = _a.sent();
+                        if (!retrievedEntity) {
+                            throw new NotFound_1.NotFoundException("User with id ".concat(id, " was not found"));
+                        }
                         userData = {
                             id: retrievedEntity.id,
                             firstName: retrievedEntity.firstName,
@@ -125,6 +130,29 @@ var UserTypeOrmRepository = /** @class */ (function (_super) {
                             age: createdEntity.age
                         };
                         return [2 /*return*/, new UserOutputDTO_1.UserOutputDTO(userData)];
+                }
+            });
+        });
+    };
+    UserTypeOrmRepository.prototype.deleteById = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var userToBeDeleted, deletedUser, property;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.repository.findOneBy({ id: id })];
+                    case 1:
+                        userToBeDeleted = _a.sent();
+                        if (!userToBeDeleted) {
+                            throw new NotFound_1.NotFoundException("User with id ".concat(id, " was not found"));
+                        }
+                        return [4 /*yield*/, this.repository.delete({ id: id })];
+                    case 2:
+                        _a.sent();
+                        deletedUser = new UserDataClass_1.UserDataClass();
+                        for (property in userToBeDeleted) {
+                            deletedUser[property] = userToBeDeleted[property];
+                        }
+                        return [2 /*return*/, new UserOutputDTO_1.UserOutputDTO(deletedUser)];
                 }
             });
         });

@@ -3,6 +3,7 @@ import {UserInputDTO} from "../../../dto/user/UserInputDTO";
 import {UserOutputDTO} from "../../../dto/user/UserOutputDTO";
 import {TypeOrmRepository} from "../TypeOrmRepository";
 import {UserDataClass} from "../../../dto/user/UserDataClass";
+import {NotFoundException} from "../../../common/exceptions/NotFound";
 
 
 export class UserTypeOrmRepository extends TypeOrmRepository<User, UserInputDTO, UserOutputDTO> {
@@ -14,6 +15,9 @@ export class UserTypeOrmRepository extends TypeOrmRepository<User, UserInputDTO,
     // TODO: investigate error generated when id is not any
     async getById(id: any): Promise<UserOutputDTO> {
         const retrievedEntity: User = await this.repository.findOneBy({id:id})
+        if (!retrievedEntity){
+            throw new NotFoundException(`User with id ${id} was not found`);
+        }
         const userData: UserDataClass = {
             id: retrievedEntity.id,
             firstName: retrievedEntity.firstName,
@@ -55,5 +59,18 @@ export class UserTypeOrmRepository extends TypeOrmRepository<User, UserInputDTO,
             age:createdEntity.age
         }
         return new UserOutputDTO(userData)
+    }
+
+    async deleteById(id: any): Promise<UserOutputDTO> {
+        const userToBeDeleted = await this.repository.findOneBy({id: id})
+        if(!userToBeDeleted){
+            throw new NotFoundException(`User with id ${id} was not found`)
+        }
+        await this.repository.delete({id: id})
+        const deletedUser = new UserDataClass()
+        for (let property in userToBeDeleted){
+            deletedUser[property] = userToBeDeleted[property]
+        }
+        return new UserOutputDTO(deletedUser)
     }
 }
