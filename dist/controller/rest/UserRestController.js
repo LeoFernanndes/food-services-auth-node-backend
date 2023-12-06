@@ -48,26 +48,28 @@ var UserTypeOrmRepository_1 = require("../../repository/typeOrm/user/UserTypeOrm
 var User_1 = require("../../entity/User");
 var GetUserByIdUseCase_1 = require("../../useCase/user/GetUserByIdUseCase");
 // TODO: decide where and how to validate data by instantiating new DTO inside routes
+// TODO: create a plain to dto conversion tool
 exports.router = express_1.default.Router();
 exports.router.post('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var payloadUser, usersRepository, createUserUseCase, userDTO, createdUserDTO;
+    var payloadUser, usersRepository, createUserUseCase, userDTO, createdUserDTO, plainObjectResponse;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                payloadUser = req.body.user;
+                payloadUser = req.body;
                 usersRepository = new UserTypeOrmRepository_1.UserTypeOrmRepository(User_1.User);
                 createUserUseCase = new CreateUserUseCase_1.CreateUserUseCase(usersRepository);
                 userDTO = new UserInputDTO_1.UserInputDTO(payloadUser);
-                return [4 /*yield*/, createUserUseCase.execute(userDTO.validatedData)];
+                return [4 /*yield*/, createUserUseCase.execute(userDTO)];
             case 1:
                 createdUserDTO = _a.sent();
-                res.status(201).json(createdUserDTO);
+                plainObjectResponse = createdUserDTO.validatedData;
+                res.status(201).json(plainObjectResponse);
                 return [2 /*return*/];
         }
     });
 }); });
 exports.router.get('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var usersRepository, listUsersUseCase, users;
+    var usersRepository, listUsersUseCase, users, plainObjectsResponse;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -76,13 +78,17 @@ exports.router.get('/', function (req, res) { return __awaiter(void 0, void 0, v
                 return [4 /*yield*/, listUsersUseCase.execute()];
             case 1:
                 users = _a.sent();
-                res.status(200).json(users);
+                plainObjectsResponse = [];
+                users.forEach(function (user) {
+                    plainObjectsResponse.push(user.validatedData);
+                });
+                res.status(200).json(plainObjectsResponse);
                 return [2 /*return*/];
         }
     });
 }); });
 exports.router.get('/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, usersRepository, getUserByIdUseCase, user;
+    var userId, usersRepository, getUserByIdUseCase, user, plainObjectResponse;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -92,7 +98,8 @@ exports.router.get('/:id', function (req, res) { return __awaiter(void 0, void 0
                 return [4 /*yield*/, getUserByIdUseCase.execute(userId)];
             case 1:
                 user = _a.sent();
-                res.status(200).json(user);
+                plainObjectResponse = user.validatedData;
+                res.status(200).json(plainObjectResponse);
                 return [2 /*return*/];
         }
     });

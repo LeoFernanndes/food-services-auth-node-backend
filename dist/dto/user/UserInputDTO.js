@@ -17,22 +17,44 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserInputDTO = void 0;
 var BaseInputDTO_1 = require("../BaseInputDTO");
+var UserDataClass_1 = require("./UserDataClass");
+var class_validator_1 = require("class-validator");
 var UserInputDTO = /** @class */ (function (_super) {
     __extends(UserInputDTO, _super);
     function UserInputDTO(object) {
         var _this = _super.call(this, object) || this;
         _this._allowedFieldNames = ['firstName', 'lastName', 'age'];
+        _this.initialData = object;
+        _this.validationErrors = _this.validateDataClass(object);
+        _this.validatedData = _this.parseValidatedDataClass(object);
+        _this.initialData = object;
         return _this;
     }
-    UserInputDTO.prototype.validateObject = function (object) {
-        this.lastName = object.firstName;
-        this.lastName = object.lastName;
-        this.age = object.age;
-        return {
-            firstName: object.firstName,
-            lastName: object.lastName,
-            age: object.age
-        };
+    // TODO: find a way of generating errors only once
+    UserInputDTO.prototype.validateDataClass = function (userDataClass) {
+        var dataClassToBeValidated = new UserDataClass_1.UserDataClass();
+        dataClassToBeValidated.id = userDataClass.id;
+        dataClassToBeValidated.firstName = userDataClass.firstName;
+        dataClassToBeValidated.lastName = userDataClass.lastName;
+        dataClassToBeValidated.age = userDataClass.age;
+        return (0, class_validator_1.validateSync)(dataClassToBeValidated);
+    };
+    UserInputDTO.prototype.parseValidatedDataClass = function (object) {
+        var validationErrors = this.validateDataClass(object);
+        if (validationErrors.length > 0) {
+            throw validationErrors;
+        }
+        else {
+            var parsedData = new UserDataClass_1.UserDataClass();
+            parsedData.id = object.id;
+            parsedData.firstName = object.firstName;
+            parsedData.lastName = object.lastName;
+            parsedData.age = object.age;
+            return parsedData;
+        }
+    };
+    UserInputDTO.prototype.validateData = function (data) {
+        return [];
     };
     return UserInputDTO;
 }(BaseInputDTO_1.BaseInputDTO));

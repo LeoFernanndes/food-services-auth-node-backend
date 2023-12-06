@@ -1,9 +1,9 @@
 import { AppDataSource } from "./data-source"
-import { User } from "./entity/User"
 import {config} from "dotenv";
 import express, {Express, Request, Response} from "express";
-import {router} from "./controller/rest/UserRestController";
+import {router as UserExpressRouter} from "./controller/rest/UserExpressController";
 import "reflect-metadata";
+import {logPayloadMiddleware} from "./controller/rest/logPayloadMiddleware";
 
 
 AppDataSource.initialize().then(async () => {
@@ -17,7 +17,8 @@ const app: Express = express();
 const port = process.env.WEBSERVICE_PORT;
 
 app.use(express.json())
-app.use('/users', router)
+app.use(logPayloadMiddleware)
+app.use('/users', UserExpressRouter)
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Express + TypeScript Server!');

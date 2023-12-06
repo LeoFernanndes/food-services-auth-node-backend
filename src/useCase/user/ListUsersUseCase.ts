@@ -1,7 +1,6 @@
 import {UserTypeOrmRepository} from "../../repository/typeOrm/user/UserTypeOrmRepository";
 import {UserOutputDTO} from "../../dto/user/UserOutputDTO";
 import {BaseUseCaseInterface} from "../BaseUseCaseInterface";
-import {BaseDTO} from "../../dto/BaseDTO";
 
 
 export class ListUsersUseCase implements BaseUseCaseInterface {
@@ -10,7 +9,6 @@ export class ListUsersUseCase implements BaseUseCaseInterface {
         this.repository = repository;
     }
 
-    async execute();
     async execute(): Promise<UserOutputDTO[]> {
         return await this.repository.getAll()
     }

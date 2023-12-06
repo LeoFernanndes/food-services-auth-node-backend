@@ -1,17 +1,17 @@
 import { BaseDTO } from "./BaseDTO";
+import {DataClass} from "./DataClass";
 
 
-export abstract class BaseOutputDTO extends BaseDTO {
+export abstract class BaseOutputDTO extends BaseDTO implements DataClass{
     _dtoType: 'input' | 'output' = 'input'
     abstract _allowedFieldNames: string[];
-    abstract initialData: BaseOutputDTO;
-    abstract validatedData: BaseOutputDTO;
+    initialData: DataClass;
+    readonly validatedData: DataClass;
 
-    constructor(object: BaseOutputDTO) {
+    protected constructor(object: DataClass) {
         super();
         this.initialData = object;
         this.validatedData = this.validateObject(object)
     }
-
-    abstract validateObject(object: BaseOutputDTO): BaseOutputDTO
+    abstract validateObject(object: DataClass): DataClass
 }

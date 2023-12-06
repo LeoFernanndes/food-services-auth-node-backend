@@ -23,23 +23,10 @@ var BaseInputDTO = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this._dtoType = 'input';
         _this.initialData = object;
-        _this.validatedData = _this.validateObject(object);
+        _this.validatedData = _this.parseValidatedDataClass(object);
         return _this;
     }
     return BaseInputDTO;
 }(BaseDTO_1.BaseDTO));
 exports.BaseInputDTO = BaseInputDTO;
-// export abstract class BaseInputDTO extends BaseDTO {
-//     private _dtoType: 'input' | 'output' = 'input'
-//     abstract _allowedFieldNames: string[];
-//     abstract initialData: BaseInputDTO;
-//     readonly abstract validatedData: BaseInputDTO;
-//
-//     constructor(object: BaseInputDTO) {
-//         super();
-//         this.initialData = object
-//         this.validatedData = this.validateObject(object)
-//     }
-//     abstract validateObject(object: BaseInputDTO): BaseInputDTO;
-// }
 //# sourceMappingURL=BaseInputDTO.js.map

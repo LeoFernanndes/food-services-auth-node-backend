@@ -42,8 +42,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var data_source_1 = require("./data-source");
 var dotenv_1 = require("dotenv");
 var express_1 = __importDefault(require("express"));
-var UserRestController_1 = require("./controller/rest/UserRestController");
+var UserExpressController_1 = require("./controller/rest/UserExpressController");
 require("reflect-metadata");
+var logPayloadMiddleware_1 = require("./controller/rest/logPayloadMiddleware");
 data_source_1.AppDataSource.initialize().then(function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         console.log("Here you can setup and run express / fastify / any other framework.");
@@ -54,7 +55,8 @@ data_source_1.AppDataSource.initialize().then(function () { return __awaiter(voi
 var app = (0, express_1.default)();
 var port = process.env.WEBSERVICE_PORT;
 app.use(express_1.default.json());
-app.use('/users', UserRestController_1.router);
+app.use(logPayloadMiddleware_1.logPayloadMiddleware);
+app.use('/users', UserExpressController_1.router);
 app.get('/', function (req, res) {
     res.send('Express + TypeScript Server!');
 });

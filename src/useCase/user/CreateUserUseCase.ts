@@ -10,7 +10,6 @@ export class CreateUserUseCase implements BaseUseCaseInterface{
         this.repository = repository;
     }
 
-    async execute(userDto: UserInputDTO): Promise<UserOutputDTO>;
     async execute(userDTO: UserInputDTO): Promise<UserOutputDTO> {
         return this.repository.save(userDTO)
     }

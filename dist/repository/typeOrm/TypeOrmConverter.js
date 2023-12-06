@@ -4,14 +4,14 @@ exports.TypeOrmConverter = void 0;
 var TypeOrmConverter = /** @class */ (function () {
     function TypeOrmConverter() {
     }
-    TypeOrmConverter.prototype.entityToDTO = function (entity) {
+    TypeOrmConverter.entityToDTO = function (entity) {
         var dtoToBeReturned = {};
         for (var k in entity) {
             dtoToBeReturned[k] = entity[k];
         }
         return dtoToBeReturned;
     };
-    TypeOrmConverter.prototype.dtoToEntity = function (dto) {
+    TypeOrmConverter.dtoToEntity = function (dto) {
         var entityToBeReturned = {};
         for (var k in dto._allowedFieldNames) {
             entityToBeReturned[k] = dto[k];

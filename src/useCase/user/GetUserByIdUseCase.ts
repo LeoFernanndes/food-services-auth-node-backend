@@ -9,7 +9,6 @@ export class GetUserByIdUseCase implements BaseUseCaseInterface{
         this.repository = repository;
     }
 
-    async execute(id);
     async execute(id: number | string ): Promise<UserOutputDTO> {
         return await this.repository.getById(id)
     }

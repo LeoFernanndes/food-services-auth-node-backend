@@ -1,6 +1,10 @@
+import {DataClass} from "./DataClass";
+
 export abstract class BaseDTO {
-    private abstract _dtoType: 'input' | 'output';
+    abstract _dtoType: 'input' | 'output';
     abstract _allowedFieldNames: string[];
-    private abstract initialData: BaseDTO;
-    readonly abstract validatedData: BaseDTO;
+    abstract initialData: DataClass;
+    readonly abstract validatedData: DataClass;
+
+    abstract parseValidatedDataClass(object: DataClass): DataClass;
 }

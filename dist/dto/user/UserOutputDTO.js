@@ -25,16 +25,18 @@ var UserOutputDTO = /** @class */ (function (_super) {
         return _this;
     }
     UserOutputDTO.prototype.validateObject = function (object) {
-        this.id = object.id;
-        this.lastName = object.firstName;
-        this.lastName = object.lastName;
-        this.age = object.age;
         return {
             id: object.id,
             firstName: object.firstName,
             lastName: object.lastName,
             age: object.age
         };
+    };
+    UserOutputDTO.prototype.parseValidatedDataClass = function (object) {
+        return undefined;
+    };
+    UserOutputDTO.prototype.validateData = function (data) {
+        return [];
     };
     return UserOutputDTO;
 }(BaseOutputDTO_1.BaseOutputDTO));
