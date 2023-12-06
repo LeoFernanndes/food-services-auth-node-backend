@@ -3,5 +3,5 @@ import {BaseInputDTO} from "../dto/BaseInputDTO";
 
 
 export interface BaseUseCaseInterface {
-    execute(input?: any): Promise<BaseOutputDTO> | Promise<BaseOutputDTO[]>
+    execute(id?: any, data?: any): Promise<BaseOutputDTO> | Promise<BaseOutputDTO[]>
 }

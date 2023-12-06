@@ -52,6 +52,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserTypeOrmRepository = void 0;
+var User_1 = require("../../../entity/User");
 var UserOutputDTO_1 = require("../../../dto/user/UserOutputDTO");
 var TypeOrmRepository_1 = require("../TypeOrmRepository");
 var UserDataClass_1 = require("../../../dto/user/UserDataClass");
@@ -61,10 +62,37 @@ var UserTypeOrmRepository = /** @class */ (function (_super) {
     function UserTypeOrmRepository(entity) {
         return _super.call(this, entity) || this;
     }
+    UserTypeOrmRepository.prototype.convertDtoToDataClass = function (dto) {
+        var validatedData = dto.validatedData;
+        var userDataClass = new UserDataClass_1.UserDataClass();
+        for (var property in validatedData) {
+            userDataClass[property] = validatedData[property];
+        }
+        return userDataClass;
+    };
+    UserTypeOrmRepository.prototype.convertEntityToDataClass = function (entity) {
+        var userDataClass = new UserDataClass_1.UserDataClass();
+        for (var property in entity) {
+            userDataClass[property] = entity[property];
+        }
+        return userDataClass;
+    };
+    UserTypeOrmRepository.prototype.updateEntityFromDTO = function (entity, dto) {
+        for (var property in dto.validatedData) {
+            if (property != 'constructor') {
+                entity[property] = dto.validatedData[property];
+            }
+        }
+        return entity;
+    };
+    UserTypeOrmRepository.prototype.createEntityFromDto = function (dto) {
+        var emptyEntityToBeReturned = this.repository.create();
+        return this.updateEntityFromDTO(emptyEntityToBeReturned, dto);
+    };
     // TODO: investigate error generated when id is not any
     UserTypeOrmRepository.prototype.getById = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var retrievedEntity, userData;
+            var retrievedEntity;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.repository.findOneBy({ id: id })];
@@ -73,13 +101,7 @@ var UserTypeOrmRepository = /** @class */ (function (_super) {
                         if (!retrievedEntity) {
                             throw new NotFound_1.NotFoundException("User with id ".concat(id, " was not found"));
                         }
-                        userData = {
-                            id: retrievedEntity.id,
-                            firstName: retrievedEntity.firstName,
-                            lastName: retrievedEntity.lastName,
-                            age: retrievedEntity.age
-                        };
-                        return [2 /*return*/, new UserOutputDTO_1.UserOutputDTO(userData)];
+                        return [2 /*return*/, new UserOutputDTO_1.UserOutputDTO(retrievedEntity)];
                 }
             });
         });
@@ -94,13 +116,7 @@ var UserTypeOrmRepository = /** @class */ (function (_super) {
                         retrievedEntities = _a.sent();
                         returnedDTOs = [];
                         retrievedEntities.forEach(function (retrievedEntity) {
-                            var userData = {
-                                id: retrievedEntity.id,
-                                firstName: retrievedEntity.firstName,
-                                lastName: retrievedEntity.lastName,
-                                age: retrievedEntity.age
-                            };
-                            var returnedDTO = new UserOutputDTO_1.UserOutputDTO(userData);
+                            var returnedDTO = new UserOutputDTO_1.UserOutputDTO(retrievedEntity);
                             returnedDTOs.push(returnedDTO);
                         });
                         return [2 /*return*/, returnedDTOs];
@@ -110,33 +126,52 @@ var UserTypeOrmRepository = /** @class */ (function (_super) {
     };
     UserTypeOrmRepository.prototype.save = function (baseDTO) {
         return __awaiter(this, void 0, void 0, function () {
-            var validatedDate, entityToBePersisted, createdEntity, userData;
+            var entityToBePersisted, createdEntity;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        validatedDate = baseDTO.validatedData;
-                        entityToBePersisted = this.repository.create();
-                        entityToBePersisted.id = validatedDate.id;
-                        entityToBePersisted.firstName = validatedDate.firstName;
-                        entityToBePersisted.lastName = validatedDate.lastName;
-                        entityToBePersisted.age = validatedDate.age;
+                        entityToBePersisted = this.createEntityFromDto(baseDTO);
                         return [4 /*yield*/, this.repository.save(entityToBePersisted)];
                     case 1:
                         createdEntity = _a.sent();
-                        userData = {
-                            id: createdEntity.id,
-                            firstName: createdEntity.firstName,
-                            lastName: createdEntity.lastName,
-                            age: createdEntity.age
-                        };
-                        return [2 /*return*/, new UserOutputDTO_1.UserOutputDTO(userData)];
+                        return [2 /*return*/, new UserOutputDTO_1.UserOutputDTO(createdEntity)];
+                }
+            });
+        });
+    };
+    UserTypeOrmRepository.prototype.update = function (id, userInputDto) {
+        return __awaiter(this, void 0, void 0, function () {
+            var currentUserEntity, userToBeUpdatedEntity, updatedUserResult, error_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.repository.findOneBy({ id: id })];
+                    case 1:
+                        currentUserEntity = _a.sent();
+                        if (!currentUserEntity) {
+                            throw new NotFound_1.NotFoundException("User with id ".concat(id, " was not found"));
+                        }
+                        userToBeUpdatedEntity = this.updateEntityFromDTO(currentUserEntity, userInputDto);
+                        _a.label = 2;
+                    case 2:
+                        _a.trys.push([2, 5, , 6]);
+                        return [4 /*yield*/, this.repository.createQueryBuilder().update(User_1.User).set(userToBeUpdatedEntity).where("id = :id", { id: id }).execute()];
+                    case 3:
+                        _a.sent();
+                        return [4 /*yield*/, this.repository.findOneBy({ id: id })];
+                    case 4:
+                        updatedUserResult = _a.sent();
+                        return [2 /*return*/, new UserOutputDTO_1.UserOutputDTO(updatedUserResult)];
+                    case 5:
+                        error_1 = _a.sent();
+                        throw new Error('Unprocessable entity');
+                    case 6: return [2 /*return*/];
                 }
             });
         });
     };
     UserTypeOrmRepository.prototype.deleteById = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var userToBeDeleted, deletedUser, property;
+            var userToBeDeleted;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.repository.findOneBy({ id: id })];
@@ -148,11 +183,7 @@ var UserTypeOrmRepository = /** @class */ (function (_super) {
                         return [4 /*yield*/, this.repository.delete({ id: id })];
                     case 2:
                         _a.sent();
-                        deletedUser = new UserDataClass_1.UserDataClass();
-                        for (property in userToBeDeleted) {
-                            deletedUser[property] = userToBeDeleted[property];
-                        }
-                        return [2 /*return*/, new UserOutputDTO_1.UserOutputDTO(deletedUser)];
+                        return [2 /*return*/, new UserOutputDTO_1.UserOutputDTO(userToBeDeleted)];
                 }
             });
         });

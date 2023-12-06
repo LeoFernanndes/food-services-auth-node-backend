@@ -44,7 +44,7 @@ var dotenv_1 = require("dotenv");
 var express_1 = __importDefault(require("express"));
 var UserExpressController_1 = require("./controller/rest/UserExpressController");
 require("reflect-metadata");
-var logPayloadMiddleware_1 = require("./controller/rest/logPayloadMiddleware");
+var logPayloadMiddleware_1 = require("./controller/rest/middlewares/logPayloadMiddleware");
 data_source_1.AppDataSource.initialize().then(function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         console.log("Here you can setup and run express / fastify / any other framework.");

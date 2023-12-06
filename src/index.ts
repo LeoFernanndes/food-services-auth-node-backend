@@ -3,7 +3,7 @@ import {config} from "dotenv";
 import express, {Express, Request, Response} from "express";
 import {router as UserExpressRouter} from "./controller/rest/UserExpressController";
 import "reflect-metadata";
-import {logPayloadMiddleware} from "./controller/rest/logPayloadMiddleware";
+import {logPayloadMiddleware} from "./controller/rest/middlewares/logPayloadMiddleware";
 
 
 AppDataSource.initialize().then(async () => {

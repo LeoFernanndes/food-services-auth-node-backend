@@ -9,7 +9,8 @@ import {GetUserByIdUseCase} from "../../useCase/user/GetUserByIdUseCase";
 import {UserDataClass} from "../../dto/user/UserDataClass";
 import {DeleteUserByIdUseCase} from "../../useCase/user/DeleteUserByIdUseCase";
 import {NotFoundException} from "../../common/exceptions/NotFound";
-import {validatePayloadMiddleware} from "./validatePayloadMiddleware";
+import {validatePayloadMiddleware} from "./middlewares/validatePayloadMiddleware";
+import {UpdateUserUseCase} from "../../useCase/user/UpdateUserUseCase";
 
 
 // TODO: decide where and how to validate data by instantiating new DTO inside routes
@@ -55,6 +56,26 @@ router.get('/:id', async (req, res) => {
         }
     }
 });
+
+router.put('/:id', validatePayloadMiddleware(new UserDataClass()), async (req, res) => {
+    const userId = req.params.id
+    const payloadUser = req.body
+    const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(User);
+    const createUserUseCase: UpdateUserUseCase = new UpdateUserUseCase(usersRepository);
+    const userDTO: UserInputDTO = new UserInputDTO(payloadUser);
+    try {
+        const createdUserDTO: UserOutputDTO = await createUserUseCase.execute(userId, userDTO);
+        const plainObjectResponse = createdUserDTO.validatedData
+        res.status(201).json(plainObjectResponse);
+    } catch (error) {
+        if (error instanceof NotFoundException) {
+            res.status(404).json({'detail': error.message})
+        } else {
+            res.status(500).json({'detail': 'Internal server error'})
+        }
+    }
+});
+
 
 router.delete('/:id', async (req, res) => {
     const userId = req.params.id
