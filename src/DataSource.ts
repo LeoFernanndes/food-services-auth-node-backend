@@ -1,5 +1,6 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
+import {User} from "./entity/User";
 
 
 // TODO: check why environt variables were not properly loaded from .env
@@ -10,7 +11,7 @@ export const AppDataSource = new DataSource({
     username: "food-services-admin",
     password: "password123",
     database: "food-services",
-    entities: [/*...*/],
-    migrations: [/*...*/],
+    entities: [User],
+    migrations: [],
     subscribers: [],
 })

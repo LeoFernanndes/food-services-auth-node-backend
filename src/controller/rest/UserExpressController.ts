@@ -11,6 +11,7 @@ import {DeleteUserByIdUseCase} from "../../useCase/user/DeleteUserByIdUseCase";
 import {NotFoundException} from "../../common/exceptions/NotFound";
 import {validatePayloadMiddleware} from "./middlewares/validatePayloadMiddleware";
 import {UpdateUserUseCase} from "../../useCase/user/UpdateUserUseCase";
+import {AppDataSource} from "../../DataSource";
 
 
 // TODO: decide where and how to validate data by instantiating new DTO inside routes
@@ -21,7 +22,7 @@ export const router = express.Router();
 
 router.post('/', validatePayloadMiddleware(new UserDataClass()), async (req, res) => {
     const payloadUser = req.body
-    const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(User);
+    const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(AppDataSource);
     const createUserUseCase: CreateUserUseCase = new CreateUserUseCase(usersRepository);
     const userDTO: UserInputDTO = new UserInputDTO(payloadUser);
     const createdUserDTO: UserOutputDTO = await createUserUseCase.execute(userDTO);
@@ -30,7 +31,7 @@ router.post('/', validatePayloadMiddleware(new UserDataClass()), async (req, res
 });
 
 router.get('/', async (req, res) => {
-    const usersRepository = new UserTypeOrmRepository(User);
+    const usersRepository = new UserTypeOrmRepository(AppDataSource);
     const listUsersUseCase: ListUsersUseCase = new ListUsersUseCase(usersRepository);
     const users: UserOutputDTO[] = await listUsersUseCase.execute();
     const plainObjectsResponse: UserDataClass[] = []
@@ -42,7 +43,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     const userId = req.params.id
-    const usersRepository = new UserTypeOrmRepository(User);
+    const usersRepository = new UserTypeOrmRepository(AppDataSource);
     const getUserByIdUseCase: GetUserByIdUseCase = new GetUserByIdUseCase(usersRepository);
     try {
         const user: UserOutputDTO = await getUserByIdUseCase.execute(userId);
@@ -60,7 +61,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', validatePayloadMiddleware(new UserDataClass()), async (req, res) => {
     const userId = req.params.id
     const payloadUser = req.body
-    const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(User);
+    const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(AppDataSource);
     const createUserUseCase: UpdateUserUseCase = new UpdateUserUseCase(usersRepository);
     const userDTO: UserInputDTO = new UserInputDTO(payloadUser);
     try {
@@ -76,10 +77,9 @@ router.put('/:id', validatePayloadMiddleware(new UserDataClass()), async (req, r
     }
 });
 
-
 router.delete('/:id', async (req, res) => {
     const userId = req.params.id
-    const usersRepository = new UserTypeOrmRepository(User);
+    const usersRepository = new UserTypeOrmRepository(AppDataSource);
     const deleteUserByIdUseCase: DeleteUserByIdUseCase = new DeleteUserByIdUseCase(usersRepository);
     try {
         const user: UserOutputDTO = await deleteUserByIdUseCase.execute(userId);

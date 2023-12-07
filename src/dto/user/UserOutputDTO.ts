@@ -9,11 +9,6 @@ export class UserOutputDTO extends BaseOutputDTO {
     initialData: UserDataClass;
     readonly validatedData: UserDataClass;
 
-    id: number | string;
-    firstName: string;
-    lastName: string;
-    age: number;
-
     constructor(object: UserDataClass) {
         super(object);
     }
@@ -23,7 +18,9 @@ export class UserOutputDTO extends BaseOutputDTO {
             id: object.id,
             firstName: object.firstName,
             lastName: object.lastName,
-            age: object.age
+            age: object.age,
+            userName: object.userName,
+            password: object.password
         }
     }
 

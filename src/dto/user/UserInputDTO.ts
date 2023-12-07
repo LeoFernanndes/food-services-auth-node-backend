@@ -1,7 +1,8 @@
 import {BaseInputDTO} from "../BaseInputDTO";
 import {UserDataClass} from "./UserDataClass";
-import {validate, validateSync, ValidationError} from "class-validator";
+import {validateSync, ValidationError} from "class-validator";
 import {DataClass} from "../DataClass";
+import {NotFoundException} from "../../common/exceptions/NotFound";
 
 
 export class UserInputDTO extends BaseInputDTO {
@@ -15,34 +16,34 @@ export class UserInputDTO extends BaseInputDTO {
         this.initialData = object
         this.validationErrors = this.validateDataClass(object)
         this.validatedData = this.parseValidatedDataClass(object)
-        this.initialData = object
     }
 
     // TODO: find a way of generating errors only once
     validateDataClass(userDataClass: UserDataClass): ValidationError[] {
-        const dataClassToBeValidated = new UserDataClass();
-        dataClassToBeValidated.id = userDataClass.id
-        dataClassToBeValidated.firstName = userDataClass.firstName
-        dataClassToBeValidated.lastName = userDataClass.lastName
-        dataClassToBeValidated.age = userDataClass.age
+        const dataClassToBeValidated = this.plainToDataClass(userDataClass)
         return validateSync(dataClassToBeValidated)
     }
 
-    parseValidatedDataClass(object: UserDataClass): UserDataClass {
-        const validationErrors = this.validateDataClass(object)
+    parseValidatedDataClass(userDataClass: UserDataClass): UserDataClass {
+        const validationErrors = this.validateDataClass(userDataClass)
         if (validationErrors.length > 0){
             throw validationErrors
         } else {
-            let parsedData = new UserDataClass()
-            parsedData.id = object.id
-            parsedData.firstName = object.firstName
-            parsedData.lastName = object.lastName
-            parsedData.age = object.age
-            return parsedData
+            return this.plainToDataClass(userDataClass)
         }
     }
 
     validateData(data: DataClass): ValidationError[] {
         return [];
+    }
+
+    plainToDataClass(userDataClass: UserDataClass): UserDataClass {
+        const userDataClassToBeReturned = new UserDataClass();
+        for (let property in userDataClass){
+            if (property != 'constructor'){
+                userDataClassToBeReturned[property] = userDataClass[property]
+            }
+        }
+        return userDataClassToBeReturned
     }
 }

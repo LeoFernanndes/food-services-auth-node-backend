@@ -5,13 +5,15 @@ import {TypeOrmRepository} from "../TypeOrmRepository";
 import {UserDataClass} from "../../../dto/user/UserDataClass";
 import {NotFoundException} from "../../../common/exceptions/NotFound";
 import {BaseDTO} from "../../../dto/BaseDTO";
-import {DataClass} from "../../../dto/DataClass";
+import {DataSource} from "typeorm";
 
 
 export class UserTypeOrmRepository extends TypeOrmRepository<User, UserInputDTO, UserOutputDTO> {
 
-    constructor(entity: User) {
-        super(entity);
+    constructor(dataSource: DataSource) {
+        const repository = dataSource.getRepository(User)
+        super(repository);
+
     }
 
     convertDtoToDataClass(dto: BaseDTO): UserDataClass{
