@@ -3,9 +3,10 @@ import {UserInputDTO} from "../../../dto/user/UserInputDTO";
 import {UserOutputDTO} from "../../../dto/user/UserOutputDTO";
 import {TypeOrmRepository} from "../TypeOrmRepository";
 import {UserDataClass} from "../../../dto/user/UserDataClass";
-import {NotFoundException} from "../../../common/exceptions/NotFound";
+import {NotFoundException} from "../../../common/exceptions/NotFoundException";
 import {BaseDTO} from "../../../dto/BaseDTO";
 import {DataSource} from "typeorm";
+import {BadRequestException} from "../../../common/exceptions/BadRequestException";
 
 
 export class UserTypeOrmRepository extends TypeOrmRepository<User, UserInputDTO, UserOutputDTO> {
@@ -56,6 +57,14 @@ export class UserTypeOrmRepository extends TypeOrmRepository<User, UserInputDTO,
         return new UserOutputDTO(retrievedEntity);
     }
 
+    async getByUsername(username: any): Promise<UserOutputDTO> {
+        const retrievedEntity: User = await this.repository.findOneBy({userName:username})
+        if (!retrievedEntity){
+            throw new NotFoundException(`User with username ${username} was not found`);
+        }
+        return new UserOutputDTO(retrievedEntity);
+    }
+
     async getAll(): Promise<UserOutputDTO[]> {
         const retrievedEntities: User[] = await this.repository.find();
         const returnedDTOs: UserOutputDTO[] = [];
@@ -66,10 +75,14 @@ export class UserTypeOrmRepository extends TypeOrmRepository<User, UserInputDTO,
         return returnedDTOs;
     }
 
-    async save(baseDTO: UserInputDTO): Promise<UserOutputDTO> {
+    async create(baseDTO: UserInputDTO): Promise<UserOutputDTO> {
         const entityToBePersisted = this.createEntityFromDto(baseDTO)
-        const createdEntity: User = await this.repository.save(entityToBePersisted);
-        return new UserOutputDTO(createdEntity)
+        try {
+            const createdEntity: User = await this.repository.save(entityToBePersisted);
+            return new UserOutputDTO(createdEntity)
+        } catch (error) {
+            throw new BadRequestException(`User with userName ${entityToBePersisted.userName} already exists`)
+        }
     }
 
     async update(id: any, userInputDto: UserInputDTO): Promise<UserOutputDTO> {

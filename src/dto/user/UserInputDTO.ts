@@ -2,7 +2,7 @@ import {BaseInputDTO} from "../BaseInputDTO";
 import {UserDataClass} from "./UserDataClass";
 import {validateSync, ValidationError} from "class-validator";
 import {DataClass} from "../DataClass";
-import {NotFoundException} from "../../common/exceptions/NotFound";
+import bcrypt from "bcrypt";
 
 
 export class UserInputDTO extends BaseInputDTO {
@@ -12,7 +12,8 @@ export class UserInputDTO extends BaseInputDTO {
     readonly validationErrors: ValidationError[]
 
     constructor(object: UserDataClass) {
-        super(object);
+        super();
+        // super(object);
         this.initialData = object
         this.validationErrors = this.validateDataClass(object)
         this.validatedData = this.parseValidatedDataClass(object)
@@ -29,12 +30,9 @@ export class UserInputDTO extends BaseInputDTO {
         if (validationErrors.length > 0){
             throw validationErrors
         } else {
+            userDataClass.password = this.hashPassword(userDataClass.password)
             return this.plainToDataClass(userDataClass)
         }
-    }
-
-    validateData(data: DataClass): ValidationError[] {
-        return [];
     }
 
     plainToDataClass(userDataClass: UserDataClass): UserDataClass {
@@ -45,5 +43,10 @@ export class UserInputDTO extends BaseInputDTO {
             }
         }
         return userDataClassToBeReturned
+    }
+
+    private hashPassword(password: string): string {
+        return bcrypt.hashSync(password, 15)
+
     }
 }

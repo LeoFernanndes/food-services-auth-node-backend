@@ -12,7 +12,7 @@ describe('iutputDTO wrong instantiation - invalid properties', () => {
             lastName: 'a'.repeat(51),
             age: 151,
             userName: 'a'.repeat(51),
-            password: 'a'.repeat(51)
+            password: 'a'.repeat(101)
         }
 
         expect.assertions(1)

@@ -11,6 +11,6 @@ export class CreateUserUseCase implements BaseUseCaseInterface{
     }
 
     async execute(userDTO: UserInputDTO): Promise<UserOutputDTO> {
-        return this.repository.save(userDTO)
+        return this.repository.create(userDTO)
     }
 }

@@ -1,6 +1,5 @@
 import {BaseRepositoryInterface} from "../BaseRepositoryInterface";
-import {DataSource, Repository} from "typeorm";
-import {AppDataSource} from "../../DataSource";
+import { Repository} from "typeorm";
 import {BaseInputDTO} from "../../dto/BaseInputDTO";
 import {BaseOutputDTO} from "../../dto/BaseOutputDTO";
 
@@ -16,5 +15,9 @@ export abstract class TypeOrmRepository<TypeOrmEntity, InputDTO extends BaseInpu
 
     abstract getAll(): Promise<OutputDTO[]>
 
-    abstract save(baseDTO: InputDTO): Promise<OutputDTO>
+    abstract create(baseDTO: InputDTO): Promise<OutputDTO>
+
+    abstract deleteById(id: any): Promise<OutputDTO>
+
+    abstract update(id: any, baseDTO: InputDTO): Promise<OutputDTO>
 }

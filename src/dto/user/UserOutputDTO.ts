@@ -1,34 +1,47 @@
 import {BaseOutputDTO} from "../BaseOutputDTO";
 import {UserDataClass} from "./UserDataClass";
-import {DataClass} from "../DataClass";
-import {ValidationError} from "class-validator";
+import {validateSync, ValidationError} from "class-validator";
 
 
 export class UserOutputDTO extends BaseOutputDTO {
-    _allowedFieldNames = ['id', 'firstName', 'lastName', 'age'];
-    initialData: UserDataClass;
+    _allowedFieldNames = ['id', 'firstName', 'lastName', 'age', 'userName'];
+    readonly initialData: UserDataClass;
     readonly validatedData: UserDataClass;
+    readonly validationErrors: ValidationError[]
 
     constructor(object: UserDataClass) {
-        super(object);
+        super()
+        this.initialData = object
+        this.validationErrors = this.validateDataClass(object)
+        this.validatedData = this.parseValidatedDataClass(object)
     }
 
-    validateObject(object: UserDataClass): UserDataClass {
-        return {
-            id: object.id,
-            firstName: object.firstName,
-            lastName: object.lastName,
-            age: object.age,
-            userName: object.userName,
-            password: object.password
+    parseValidatedDataClass(userDataClass: UserDataClass): UserDataClass {
+        const validationErrors = this.validateDataClass(userDataClass)
+        if (validationErrors.length > 0){
+            throw validationErrors
+        } else {
+            const parsedUserDataClass = this.plainToDataClass(userDataClass)
+            let filteredParsedUserDataClass = new UserDataClass()
+            this._allowedFieldNames.forEach(property => {
+                filteredParsedUserDataClass[property] = parsedUserDataClass[property]
+            })
+            return filteredParsedUserDataClass
         }
     }
 
-    parseValidatedDataClass(object: DataClass): DataClass {
-        return undefined;
+    plainToDataClass(userDataClass: UserDataClass): UserDataClass {
+        const userDataClassToBeReturned = new UserDataClass();
+        for (let property in userDataClass){
+            if (property != 'constructor'){
+                userDataClassToBeReturned[property] = userDataClass[property]
+            }
+        }
+        return userDataClassToBeReturned
     }
 
-    validateData(data: DataClass): ValidationError[] {
-        return [];
+    validateDataClass(userDataClass: UserDataClass): ValidationError[] {
+        const dataClassToBeValidated = this.plainToDataClass(userDataClass)
+        return validateSync(dataClassToBeValidated)
     }
 }

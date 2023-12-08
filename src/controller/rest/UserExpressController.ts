@@ -8,10 +8,15 @@ import {User} from "../../entity/User";
 import {GetUserByIdUseCase} from "../../useCase/user/GetUserByIdUseCase";
 import {UserDataClass} from "../../dto/user/UserDataClass";
 import {DeleteUserByIdUseCase} from "../../useCase/user/DeleteUserByIdUseCase";
-import {NotFoundException} from "../../common/exceptions/NotFound";
+import {NotFoundException} from "../../common/exceptions/NotFoundException";
 import {validatePayloadMiddleware} from "./middlewares/validatePayloadMiddleware";
 import {UpdateUserUseCase} from "../../useCase/user/UpdateUserUseCase";
 import {AppDataSource} from "../../DataSource";
+import {BadRequestException} from "../../common/exceptions/BadRequestException";
+import e from "express";
+import {LoginUserUseCase} from "../../useCase/user/LoginUserUseCase";
+import {LoginInputDTO} from "../../dto/user/LoginInputDTO";
+import {LoginDataClass} from "../../dto/user/LoginDataClass";
 
 
 // TODO: decide where and how to validate data by instantiating new DTO inside routes
@@ -25,9 +30,40 @@ router.post('/', validatePayloadMiddleware(new UserDataClass()), async (req, res
     const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(AppDataSource);
     const createUserUseCase: CreateUserUseCase = new CreateUserUseCase(usersRepository);
     const userDTO: UserInputDTO = new UserInputDTO(payloadUser);
-    const createdUserDTO: UserOutputDTO = await createUserUseCase.execute(userDTO);
-    const plainObjectResponse = createdUserDTO.validatedData
-    res.status(201).json(plainObjectResponse);
+    try {
+        const createdUserDTO: UserOutputDTO = await createUserUseCase.execute(userDTO);
+        const plainObjectResponse = createdUserDTO.validatedData
+        res.status(201).json(plainObjectResponse);
+    } catch (error) {
+        if (error instanceof BadRequestException){
+            res.status(400).json({'detail': error.message})
+        } else {
+            res.status(500).json({'detail': 'Internal server error'})
+        }
+    }
+
+});
+
+// TODO: make login error messages the same to avoid data leakage
+router.post('/login', validatePayloadMiddleware(new LoginDataClass()), async (req, res) => {
+    const payloadLogin = req.body
+    const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(AppDataSource);
+    const loginUserUseCase: LoginUserUseCase = new LoginUserUseCase(usersRepository);
+    const userDTO: LoginInputDTO = new LoginInputDTO(payloadLogin);
+    try {
+        const logedInUserDTO: UserOutputDTO = await loginUserUseCase.execute(userDTO);
+        const plainObjectResponse = logedInUserDTO.validatedData
+        res.status(200).json(plainObjectResponse);
+    } catch (error) {
+        if (error instanceof BadRequestException){
+            res.status(400).json({'detail': error.message})
+        } else if (error instanceof NotFoundException) {
+            res.status(400).json({'detail': error.message})
+        } else {
+            res.status(500).json({'detail': 'Internal server error'})
+        }
+    }
+
 });
 
 router.get('/', async (req, res) => {

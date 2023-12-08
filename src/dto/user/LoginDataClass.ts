@@ -3,19 +3,7 @@ import {IsInt, Max, MaxLength, Min, validate, validateSync, ValidationError} fro
 
 
 
-export class UserDataClass extends DataClass {
-    id?: number;
-
-    @MaxLength(50)
-    firstName: string;
-
-    @MaxLength(50)
-    lastName: string;
-
-    @IsInt()
-    @Min(0)
-    @Max(150)
-    age: number;
+export class LoginDataClass extends DataClass {
 
     @MaxLength(50)
     userName: string;

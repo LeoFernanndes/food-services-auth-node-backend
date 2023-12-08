@@ -14,7 +14,7 @@ AppDataSource.initialize().then(async () => {
 config();
 
 const app: Express = express();
-const port = process.env.WEBSERVICE_PORT;
+const port = process.env.WEBSERVICE_PORT || 3000;
 
 app.use(express.json())
 app.use(logPayloadMiddleware)

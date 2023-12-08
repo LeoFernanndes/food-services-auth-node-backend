@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import {Entity, PrimaryGeneratedColumn, Column, Unique} from "typeorm"
 
 
 @Entity()
@@ -16,7 +16,7 @@ export class User {
     @Column()
     age: number
 
-    @Column()
+    @Column({unique: true})
     userName: string
 
     @Column()

@@ -8,9 +8,9 @@ export abstract class BaseInputDTO extends BaseDTO implements DataClass{
     initialData: DataClass;
     readonly validatedData: DataClass;
 
-    protected constructor(object: DataClass) {
-        super();
-        this.initialData = object
-        this.validatedData = this.parseValidatedDataClass(object)
-    }
+    // protected constructor(object: DataClass) {
+    //     super();
+    //     this.initialData = object
+    //     this.validatedData = this.parseValidatedDataClass(object)
+    // }
 }
