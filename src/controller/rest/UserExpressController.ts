@@ -17,13 +17,16 @@ import e from "express";
 import {LoginUserUseCase} from "../../useCase/user/LoginUserUseCase";
 import {LoginInputDTO} from "../../dto/user/LoginInputDTO";
 import {LoginDataClass} from "../../dto/user/LoginDataClass";
+import {LoginOutputDTO} from "../../dto/user/LoginOutputDTO";
+import {logPayloadMiddleware} from "./middlewares/logPayloadMiddleware";
+import {decodeTokenMiddleware} from "./middlewares/decodeTokenMiddleware";
 
 
 // TODO: decide where and how to validate data by instantiating new DTO inside routes
 // TODO: create a plain to dto conversion tool
 
 export const router = express.Router();
-
+router.use(decodeTokenMiddleware)
 
 router.post('/', validatePayloadMiddleware(new UserDataClass()), async (req, res) => {
     const payloadUser = req.body
@@ -49,10 +52,10 @@ router.post('/login', validatePayloadMiddleware(new LoginDataClass()), async (re
     const payloadLogin = req.body
     const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(AppDataSource);
     const loginUserUseCase: LoginUserUseCase = new LoginUserUseCase(usersRepository);
-    const userDTO: LoginInputDTO = new LoginInputDTO(payloadLogin);
+    const loginInputDTO: LoginInputDTO = new LoginInputDTO(payloadLogin);
     try {
-        const logedInUserDTO: UserOutputDTO = await loginUserUseCase.execute(userDTO);
-        const plainObjectResponse = logedInUserDTO.validatedData
+        const loginOutputDTO: LoginOutputDTO = await loginUserUseCase.execute(loginInputDTO);
+        const plainObjectResponse = loginOutputDTO.validatedData
         res.status(200).json(plainObjectResponse);
     } catch (error) {
         if (error instanceof BadRequestException){
@@ -67,6 +70,7 @@ router.post('/login', validatePayloadMiddleware(new LoginDataClass()), async (re
 });
 
 router.get('/', async (req, res) => {
+    console.log(req.headers)
     const usersRepository = new UserTypeOrmRepository(AppDataSource);
     const listUsersUseCase: ListUsersUseCase = new ListUsersUseCase(usersRepository);
     const users: UserOutputDTO[] = await listUsersUseCase.execute();
