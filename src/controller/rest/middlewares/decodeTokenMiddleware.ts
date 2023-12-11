@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from "express";
+import {NextFunction, Response} from "express";
 import jsonwebtoken from "jsonwebtoken";
 import {config} from "dotenv";
 import {FSExpressRequest} from "../FSExpressRequest";

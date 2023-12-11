@@ -12,7 +12,7 @@ export const AppDataSource = new DataSource({
     username: process.env.DATABASE_USERNAME || "food-services-admin",
     password: process.env.DATABASE_PASSWORD || "password123",
     database: process.env.DATABASE || "food-services",
-    entities: [User],
-    migrations: ["src/migration/**/*.ts"],
+    entities: ["dist/**/entity/**/*.js"],
+    migrations: ["dist/migration/**/*.js"],
     subscribers: [],
 })
