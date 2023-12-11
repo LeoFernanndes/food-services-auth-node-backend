@@ -16,5 +16,7 @@ export function decodeTokenMiddleware(req: FSExpressRequest, res: Response, next
             } catch (error){
             next()
         }
+    } else {
+        next();
     }
 }
