@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from "express";
+import {NextFunction, Response} from "express";
 import jsonwebtoken from "jsonwebtoken";
 import {config} from "dotenv";
 import {FSExpressRequest} from "../FSExpressRequest";
@@ -16,5 +16,7 @@ export function decodeTokenMiddleware(req: FSExpressRequest, res: Response, next
             } catch (error){
             next()
         }
+    } else {
+        next();
     }
 }
