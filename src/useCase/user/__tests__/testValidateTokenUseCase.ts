@@ -83,7 +83,7 @@ describe("test validate token usecase", () => {
         const validateTokenUseCase = new ValidateTokenUseCase(usersRepository);
         await validateTokenUseCase.execute(tokenInputDTO).catch(error => {
             expect(error).toBeInstanceOf(BadRequestException)
-            expect(error.message).toEqual('Invalid token')
+            expect(error.message).toEqual('Invalid toke')
         })
     });
 
