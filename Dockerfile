@@ -10,6 +10,8 @@ COPY . .
 
 RUN npm run build
 
+RUN npm run test || exit 1
+
 RUN rm -rf ./src
 
 EXPOSE 3000
