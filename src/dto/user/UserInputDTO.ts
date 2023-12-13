@@ -1,7 +1,6 @@
 import {BaseInputDTO} from "../BaseInputDTO";
 import {UserDataClass} from "./UserDataClass";
 import {validateSync, ValidationError} from "class-validator";
-import {DataClass} from "../DataClass";
 import bcrypt from "bcrypt";
 
 
@@ -13,10 +12,10 @@ export class UserInputDTO extends BaseInputDTO {
 
     constructor(object: UserDataClass) {
         super();
-        // super(object);
-        this.initialData = object
-        this.validationErrors = this.validateDataClass(object)
-        this.validatedData = this.parseValidatedDataClass(object)
+        const newObject = this.deepCopyUserDataClass(object)
+        this.initialData = newObject
+        this.validationErrors = this.validateDataClass(newObject)
+        this.validatedData = this.parseValidatedDataClass(newObject)
     }
 
     // TODO: find a way of generating errors only once
@@ -26,12 +25,13 @@ export class UserInputDTO extends BaseInputDTO {
     }
 
     parseValidatedDataClass(userDataClass: UserDataClass): UserDataClass {
-        const validationErrors = this.validateDataClass(userDataClass)
+        const newUserDataClass = this.deepCopyUserDataClass(userDataClass)
+        const validationErrors = this.validateDataClass(newUserDataClass)
         if (validationErrors.length > 0){
             throw validationErrors
         } else {
-            userDataClass.password = this.hashPassword(userDataClass.password)
-            return this.plainToDataClass(userDataClass)
+            newUserDataClass.password = this.hashPassword(newUserDataClass.password)
+            return this.plainToDataClass(newUserDataClass)
         }
     }
 
@@ -47,6 +47,13 @@ export class UserInputDTO extends BaseInputDTO {
 
     private hashPassword(password: string): string {
         return bcrypt.hashSync(password, 15)
+    }
 
+    private deepCopyUserDataClass(userDataClass: UserDataClass): UserDataClass {
+        const returnedUserDataClass = new UserDataClass();
+        for (let property in userDataClass ) {
+            returnedUserDataClass[property] = userDataClass[property]
+        }
+        return returnedUserDataClass;
     }
 }

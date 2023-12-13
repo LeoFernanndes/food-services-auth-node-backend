@@ -5,7 +5,6 @@ import {UserInputDTO} from "../../../dto/user/UserInputDTO";
 import {UserOutputDTO} from "../../../dto/user/UserOutputDTO";
 import {UserDataClass} from "../../../dto/user/UserDataClass";
 import {DataSource} from "typeorm";
-import * as bcrypt from "bcrypt";
 
 
 let dataSource: DataSource;
@@ -15,7 +14,7 @@ describe("test create user usecase", () => {
         dataSource = await initDbStoreForTests()
     })
 
-    afterAll(async () => {
+    afterEach(async () => {
         await dataSource.destroy()
     })
 
@@ -25,7 +24,7 @@ describe("test create user usecase", () => {
             firstName: 'name',
             lastName: 'surname',
             age: 30,
-            userName: 'name',
+            userName: 'username',
             password: 'password'
         }
 
@@ -40,7 +39,5 @@ describe("test create user usecase", () => {
         expect(plainObjectResponse.lastName).toBe(userDataInterface.lastName)
         expect(plainObjectResponse.age).toBe(userDataInterface.age)
         expect(plainObjectResponse.userName).toBe(userDataInterface.userName)
-        // expect(plainObjectResponse.password).toBe('$2b$10$ft5Z3JiyZToUnMzO/QSItONIsaBaCJ6rxFcmYdWIwF8Xxx7dc2G3O')
-        // expect(bcrypt.compareSync(userDataInterface.password, '$2b$10$qLUfABjz./x0rwyetiACnOkJMo5y8o2rrxUrJHM5zThqHoRW1mZMK')).toBe(true)
     });
 });

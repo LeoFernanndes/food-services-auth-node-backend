@@ -1,17 +1,15 @@
-import {UserOutputDTO} from "../../dto/user/UserOutputDTO";
 import {UserTypeOrmRepository} from "../../repository/typeOrm/user/UserTypeOrmRepository";
 import {BaseUseCaseInterface} from "../BaseUseCaseInterface";
 import {LoginInputDTO} from "../../dto/user/LoginInputDTO";
 import bcrypt from "bcrypt";
 import {BadRequestException} from "../../common/exceptions/BadRequestException";
 import {LoginOutputDTO} from "../../dto/user/LoginOutputDTO";
-import jsonwebtoken from "jsonwebtoken"
 import {config} from "dotenv"
+import {TokenEnconder} from "../../common/token/TokenEnconder";
 
 
 config();
 
-const JWT_SECRET = process.env.JWT_SECRET || "AXFZqb2QzfK1x4by7SIhhkrs9ucYmtd5"
 
 export class LoginUserUseCase implements BaseUseCaseInterface{
     private readonly repository: UserTypeOrmRepository;
@@ -20,14 +18,11 @@ export class LoginUserUseCase implements BaseUseCaseInterface{
     }
 
     async execute(loginDTO: LoginInputDTO): Promise<LoginOutputDTO> {
-        const user = await this.repository.getByUsername(loginDTO.validatedData.userName)
-        if (!bcrypt.compareSync(loginDTO.validatedData.password, user.initialData.password)){
+        const userOutputDTO = await this.repository.getByUsername(loginDTO.validatedData.userName)
+        if (!bcrypt.compareSync(loginDTO.validatedData.password, userOutputDTO.initialData.password)){
             throw new BadRequestException('Invalid user password');
         }
-        const token = jsonwebtoken.sign({
-            data: user.validatedData
-        }, JWT_SECRET, { expiresIn: '1h' });
-
-        return new LoginOutputDTO({token: token})
+        const tokenDataClass = TokenEnconder.encode(userOutputDTO, 3600).validatedData
+        return new LoginOutputDTO(tokenDataClass)
     }
 }

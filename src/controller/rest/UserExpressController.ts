@@ -4,7 +4,6 @@ import {UserInputDTO} from "../../dto/user/UserInputDTO"
 import {UserOutputDTO} from "../../dto/user/UserOutputDTO";
 import {ListUsersUseCase} from "../../useCase/user/ListUsersUseCase";
 import {UserTypeOrmRepository} from "../../repository/typeOrm/user/UserTypeOrmRepository";
-import {User} from "../../entity/User";
 import {GetUserByIdUseCase} from "../../useCase/user/GetUserByIdUseCase";
 import {UserDataClass} from "../../dto/user/UserDataClass";
 import {DeleteUserByIdUseCase} from "../../useCase/user/DeleteUserByIdUseCase";
@@ -13,13 +12,15 @@ import {validatePayloadMiddleware} from "./middlewares/validatePayloadMiddleware
 import {UpdateUserUseCase} from "../../useCase/user/UpdateUserUseCase";
 import {AppDataSource} from "../../DataSource";
 import {BadRequestException} from "../../common/exceptions/BadRequestException";
-import e from "express";
 import {LoginUserUseCase} from "../../useCase/user/LoginUserUseCase";
 import {LoginInputDTO} from "../../dto/user/LoginInputDTO";
 import {LoginDataClass} from "../../dto/user/LoginDataClass";
 import {LoginOutputDTO} from "../../dto/user/LoginOutputDTO";
-import {logPayloadMiddleware} from "./middlewares/logPayloadMiddleware";
 import {decodeTokenMiddleware} from "./middlewares/decodeTokenMiddleware";
+import {TokenDataClass} from "../../dto/user/TokenDataClass";
+import {ValidateTokenUseCase} from "../../useCase/user/ValidateTokenUseCase";
+import {TokenInputDTO} from "../../dto/user/TokenInputDTO";
+import {TokenOutputDTO} from "../../dto/user/TokenOutputDTO";
 
 
 // TODO: decide where and how to validate data by instantiating new DTO inside routes
@@ -44,7 +45,6 @@ router.post('/', validatePayloadMiddleware(new UserDataClass()), async (req, res
             res.status(500).json({'detail': 'Internal server error'})
         }
     }
-
 });
 
 // TODO: make login error messages the same to avoid data leakage
@@ -66,11 +66,27 @@ router.post('/login', validatePayloadMiddleware(new LoginDataClass()), async (re
             res.status(500).json({'detail': 'Internal server error'})
         }
     }
+});
 
+router.post('/validate-token', validatePayloadMiddleware(new TokenDataClass()), async (req, res) => {
+    const payloadToken = req.body
+    const tokenInputDTO: TokenInputDTO = new TokenInputDTO(payloadToken);
+    const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(AppDataSource);
+    const validateTokenUseCase: ValidateTokenUseCase = new ValidateTokenUseCase(usersRepository);
+    try {
+        const tokenOutputDTO: TokenOutputDTO = await validateTokenUseCase.execute(tokenInputDTO);
+        const plainObjectResponse = tokenOutputDTO.validatedData
+        res.status(200).json(plainObjectResponse);
+    } catch (error) {
+        if (error instanceof BadRequestException){
+            res.status(400).json({'detail': error.message})
+        } else {
+            res.status(500).json({'detail': 'Internal server error'})
+        }
+    }
 });
 
 router.get('/', async (req, res) => {
-    console.log(req.headers)
     const usersRepository = new UserTypeOrmRepository(AppDataSource);
     const listUsersUseCase: ListUsersUseCase = new ListUsersUseCase(usersRepository);
     const users: UserOutputDTO[] = await listUsersUseCase.execute();
