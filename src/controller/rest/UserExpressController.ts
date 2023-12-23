@@ -39,6 +39,15 @@ router.post('/', validatePayloadMiddleware(new UserDataClass()), async (req, res
     try {
         const createdUserDTO: UserOutputDTO = await createUserUseCase.execute(userDTO);
         const plainObjectResponse = createdUserDTO.validatedData
+
+        const rabbitMQMessage = {
+            id: uuidV4().toString(),
+            action: 'authCreateUser',
+            producer: 'auth',
+            data: createdUserDTO.validatedData
+        }
+        rabbitMQProducer(JSON.stringify(rabbitMQMessage))
+
         res.status(201).json(plainObjectResponse);
     } catch (error) {
         if (error instanceof BadRequestException){
@@ -65,7 +74,6 @@ router.post('/login', validatePayloadMiddleware(new LoginDataClass()), async (re
             producer: 'auth',
             data: loginOutputDTO.validatedData
         }
-
         rabbitMQProducer(JSON.stringify(rabbitMQMessage))
 
         res.status(200).json(plainObjectResponse);
