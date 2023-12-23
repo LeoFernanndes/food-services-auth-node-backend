@@ -1,4 +1,4 @@
-import express, {Request, Response} from "express";
+import express from "express";
 import {CreateUserUseCase} from "../../useCase/user/CreateUserUseCase";
 import {UserInputDTO} from "../../dto/user/UserInputDTO"
 import {UserOutputDTO} from "../../dto/user/UserOutputDTO";
@@ -21,6 +21,8 @@ import {TokenDataClass} from "../../dto/user/TokenDataClass";
 import {ValidateTokenUseCase} from "../../useCase/user/ValidateTokenUseCase";
 import {TokenInputDTO} from "../../dto/user/TokenInputDTO";
 import {TokenOutputDTO} from "../../dto/user/TokenOutputDTO";
+import {rabbitMQProducer} from "../../index";
+import { v4 as uuidV4 } from "uuid"
 
 
 // TODO: decide where and how to validate data by instantiating new DTO inside routes
@@ -56,6 +58,16 @@ router.post('/login', validatePayloadMiddleware(new LoginDataClass()), async (re
     try {
         const loginOutputDTO: LoginOutputDTO = await loginUserUseCase.execute(loginInputDTO);
         const plainObjectResponse = loginOutputDTO.validatedData
+
+        const rabbitMQMessage = {
+            id: uuidV4().toString(),
+            action: 'authLogin',
+            producer: 'auth',
+            data: loginOutputDTO.validatedData
+        }
+
+        rabbitMQProducer(JSON.stringify(rabbitMQMessage))
+
         res.status(200).json(plainObjectResponse);
     } catch (error) {
         if (error instanceof BadRequestException){
@@ -76,6 +88,15 @@ router.post('/validate-token', validatePayloadMiddleware(new TokenDataClass()), 
     try {
         const tokenOutputDTO: TokenOutputDTO = await validateTokenUseCase.execute(tokenInputDTO);
         const plainObjectResponse = tokenOutputDTO.validatedData
+
+        const rabbitMQMessage = {
+            id: uuidV4().toString(),
+            action: 'authValidateToken',
+            producer: 'auth',
+            data: tokenOutputDTO.validatedData
+        }
+        rabbitMQProducer(JSON.stringify(rabbitMQMessage))
+
         res.status(200).json(plainObjectResponse);
     } catch (error) {
         if (error instanceof BadRequestException){
