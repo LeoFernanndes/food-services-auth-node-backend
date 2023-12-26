@@ -1,7 +1,7 @@
 import {initDbStoreForTests} from "../../../testDataSource";
 import {UserTypeOrmRepository} from "../../../repository/typeOrm/user/UserTypeOrmRepository";
 import {CreateUserUseCase} from "../CreateUserUseCase";
-import {UserDataClass} from "../../../dto/user/UserDataClass";
+import {UserDataClass} from "../../../dto/user/dataClass/UserDataClass";
 import {DataSource} from "typeorm";
 import {UserDTO} from "../../../dto/user/UserDTO";
 

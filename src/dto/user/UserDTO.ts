@@ -1,4 +1,4 @@
-import {UserDataClass} from "./UserDataClass";
+import {UserDataClass} from "./dataClass/UserDataClass";
 import bcrypt from "bcrypt";
 import {User} from "../../entity/User";
 import {BaseOrmDTO} from "../BaseOrmDTO";

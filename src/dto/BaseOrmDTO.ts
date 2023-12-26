@@ -1,7 +1,5 @@
-import {DataClass} from "./DataClass";
-import {validateSync, ValidationError} from "class-validator";
 import {BaseDTO} from "./BaseDTO";
-import {UserDataClass} from "./user/UserDataClass";
+
 
 export abstract class BaseOrmDTO extends BaseDTO{
     public readonly abstract entity;

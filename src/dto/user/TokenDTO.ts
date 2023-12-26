@@ -1,4 +1,4 @@
-import {TokenDataClass} from "./TokenDataClass";
+import {TokenDataClass} from "./dataClass/TokenDataClass";
 import {BaseDTO} from "../BaseDTO";
 
 

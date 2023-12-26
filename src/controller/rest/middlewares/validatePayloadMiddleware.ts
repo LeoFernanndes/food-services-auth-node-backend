@@ -1,10 +1,10 @@
-import {DataClass} from "../../../dto/DataClass";
+import {BaseDataClass} from "../../../dto/BaseDataClass";
 import {NextFunction, Request, RequestHandler, Response} from "express";
 import {validateSync} from "class-validator";
 
 
 // TODO: arrange data validation to be done in a single place
-export function validatePayloadMiddleware(dataClass: DataClass, skipMissingProperties = false): RequestHandler {
+export function validatePayloadMiddleware(dataClass: BaseDataClass, skipMissingProperties = false): RequestHandler {
     return (req, res, next) => {
         if (req.method in  ['POST', 'PUT']){
             next();

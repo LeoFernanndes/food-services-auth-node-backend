@@ -1,4 +1,4 @@
-import {DataClass} from "../../../dto/DataClass";
+import {BaseDataClass} from "../../../dto/BaseDataClass";
 import {NextFunction, Request, RequestHandler, Response} from "express";
 import {validateSync} from "class-validator";
 

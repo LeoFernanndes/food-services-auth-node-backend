@@ -1,5 +1,5 @@
 import {BaseDTO} from "../BaseDTO";
-import {LoginDataClass} from "./LoginDataClass";
+import {LoginDataClass} from "./dataClass/LoginDataClass";
 
 
 export class LoginDTO extends BaseDTO {

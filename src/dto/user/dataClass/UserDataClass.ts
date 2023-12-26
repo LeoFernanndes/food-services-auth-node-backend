@@ -1,9 +1,8 @@
-import {DataClass} from "../DataClass";
-import {IsInt, IsOptional, Max, MaxLength, Min, validate, validateSync, ValidationError} from "class-validator";
+import {BaseDataClass} from "../../BaseDataClass";
+import {IsInt, IsOptional, Max, MaxLength, Min} from "class-validator";
 
 
-
-export class UserDataClass extends DataClass {
+export class UserDataClass extends BaseDataClass {
     @IsOptional()
     id?: number;
 

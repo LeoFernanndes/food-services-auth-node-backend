@@ -1,11 +1,11 @@
-import {DataClass} from "./DataClass";
+import {BaseDataClass} from "./BaseDataClass";
 import {validateSync, ValidationError} from "class-validator";
-import {UserDataClass} from "./user/UserDataClass";
+
 
 export abstract class BaseDTO {
     readonly _allowedFieldNames: string[];
-    public  initialData: DataClass;
-    public  validatedData: DataClass;
+    public  initialData: BaseDataClass;
+    public  validatedData: BaseDataClass;
 
     protected deepCopyDataClass<T>(dataClass: T, fields: string[], type: {new(): T}): T {
         const returnedDataClass = new type();
@@ -36,7 +36,7 @@ export abstract class BaseDTO {
         return validateSync(dataClassToBeValidated)
     }
 
-    protected plainToDataClass<T>(dataClass: DataClass, type: {new(): T}): T {
+    protected plainToDataClass<T>(dataClass: BaseDataClass, type: {new(): T}): T {
         const userDataClassToBeReturned = new type();
         for (let property in dataClass){
             if (property != 'constructor'){
@@ -46,7 +46,7 @@ export abstract class BaseDTO {
         return userDataClassToBeReturned
     }
 
-    protected parseValidatedDataClass<T extends DataClass>(dataClass: T, type: {new(): T}): T {
+    protected parseValidatedDataClass<T extends BaseDataClass>(dataClass: T, type: {new(): T}): T {
         const newDataClass = this.deepCopyDataClass<T>(dataClass, this._allowedFieldNames, type)
         const validationErrors = this.validateDataClass<T>(newDataClass, type)
         if (validationErrors.length > 0){

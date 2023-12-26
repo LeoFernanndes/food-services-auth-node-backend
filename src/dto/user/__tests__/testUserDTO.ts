@@ -1,5 +1,5 @@
 import {UserDTO} from "../UserDTO";
-import {UserDataClass} from "../UserDataClass";
+import {UserDataClass} from "../dataClass/UserDataClass";
 
 
 describe('UserDTO wrong instantiation - invalid properties', () => {
