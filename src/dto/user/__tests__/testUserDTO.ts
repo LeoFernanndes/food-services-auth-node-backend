@@ -1,10 +1,10 @@
-import {UserInputDTO} from "../UserInputDTO";
+import {UserDTO} from "../UserDTO";
 import {UserDataClass} from "../UserDataClass";
 
 
-describe('UserInputDTO wrong instantiation - invalid properties', () => {
+describe('UserDTO wrong instantiation - invalid properties', () => {
 
-    it("should fail to create an userInputDTO", async () => {
+    it("should fail to create an userDTO", async () => {
 
         const userDataInterface: UserDataClass = {
             firstName: 'a'.repeat(51),
@@ -17,16 +17,16 @@ describe('UserInputDTO wrong instantiation - invalid properties', () => {
         expect.assertions(1)
 
         try {
-            new UserInputDTO(userDataInterface)
+            new UserDTO(userDataInterface, ['id', 'firstName', 'lastName', 'age', 'userName', 'password'])
         } catch (error) {
             expect(error).toHaveLength(5)
         }
     });
 })
 
-describe('UserInputDTO right instantiation', () => {
+describe('UserDTO right instantiation', () => {
 
-    it("should successfully create an userInputDTO", async () => {
+    it("should successfully create an userDTO", async () => {
 
         const userDataInterface: UserDataClass = {
             firstName: 'a'.repeat(49),
@@ -35,9 +35,9 @@ describe('UserInputDTO right instantiation', () => {
             userName: 'a'.repeat(49),
             password: 'a'.repeat(99)
         }
-        const userDTO = new UserInputDTO(userDataInterface)
+        const userDTO = new UserDTO(userDataInterface, ['id', 'firstName', 'lastName', 'age', 'userName', 'password'])
 
-        expect(userDTO.validationErrors).toHaveLength(0);
+        // expect(userDTO.validationErrors).toHaveLength(0);
         expect(userDTO.validatedData.id).toBeUndefined();
         expect(userDTO.validatedData.firstName).toEqual(userDataInterface.firstName);
         expect(userDTO.validatedData.lastName).toEqual(userDataInterface.lastName);

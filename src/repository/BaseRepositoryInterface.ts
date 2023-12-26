@@ -1,11 +1,10 @@
-import {BaseInputDTO} from "../dto/BaseInputDTO";
-import {BaseOutputDTO} from "../dto/BaseOutputDTO";
+import {BaseDTO} from "../dto/BaseDTO";
 
 
 export interface BaseRepositoryInterface {
-    getById(id: any): Promise<BaseOutputDTO>;
-    getAll(): Promise<BaseOutputDTO[]>;
-    create(baseDTO: BaseInputDTO): Promise<BaseOutputDTO>
-    update(id: any, baseDTO: BaseInputDTO): Promise<BaseOutputDTO>
-    deleteById(id: any): Promise<BaseOutputDTO>
+    getById(id: any): Promise<BaseDTO>;
+    getAll(): Promise<BaseDTO[]>;
+    create(baseDTO: BaseDTO): Promise<BaseDTO>
+    update(id: any, baseDTO: BaseDTO): Promise<BaseDTO>
+    deleteById(id: any): Promise<BaseDTO>
 }

@@ -1,11 +1,11 @@
 import {UserTypeOrmRepository} from "../../repository/typeOrm/user/UserTypeOrmRepository";
 import {BaseUseCaseInterface} from "../BaseUseCaseInterface";
-import {LoginInputDTO} from "../../dto/user/LoginInputDTO";
 import bcrypt from "bcrypt";
 import {BadRequestException} from "../../common/exceptions/BadRequestException";
-import {LoginOutputDTO} from "../../dto/user/LoginOutputDTO";
 import {config} from "dotenv"
 import {TokenEnconder} from "../../common/token/TokenEnconder";
+import {TokenDTO} from "../../dto/user/TokenDTO";
+import {LoginDTO} from "../../dto/user/LoginDTO";
 
 
 config();
@@ -17,12 +17,13 @@ export class LoginUserUseCase implements BaseUseCaseInterface{
         this.repository = repository;
     }
 
-    async execute(loginDTO: LoginInputDTO): Promise<LoginOutputDTO> {
-        const userOutputDTO = await this.repository.getByUsername(loginDTO.validatedData.userName)
-        if (!bcrypt.compareSync(loginDTO.validatedData.password, userOutputDTO.initialData.password)){
+    async execute(loginDTO: LoginDTO): Promise<TokenDTO> {
+        const userDTO = await this.repository.getByUsername(loginDTO.validatedData.userName)
+        if (!bcrypt.compareSync(loginDTO.validatedData.password, userDTO.initialData.password)){
             throw new BadRequestException('Invalid user password');
         }
-        const tokenDataClass = TokenEnconder.encode(userOutputDTO, 3600).validatedData
-        return new LoginOutputDTO(tokenDataClass)
+
+        const tokenDataClass = TokenEnconder.encode(userDTO, 3600).validatedData
+        return new TokenDTO(tokenDataClass)
     }
 }

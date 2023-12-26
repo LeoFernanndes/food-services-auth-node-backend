@@ -1,6 +1,6 @@
 import {UserTypeOrmRepository} from "../../repository/typeOrm/user/UserTypeOrmRepository";
-import {UserOutputDTO} from "../../dto/user/UserOutputDTO";
 import {BaseUseCaseInterface} from "../BaseUseCaseInterface";
+import {UserDTO} from "../../dto/user/UserDTO";
 
 
 export class DeleteUserByIdUseCase implements BaseUseCaseInterface{
@@ -9,7 +9,7 @@ export class DeleteUserByIdUseCase implements BaseUseCaseInterface{
         this.repository = repository;
     }
 
-    async execute(id: number | string ): Promise<UserOutputDTO> {
+    async execute(id: number | string ): Promise<UserDTO> {
         return await this.repository.deleteById(id)
     }
 }

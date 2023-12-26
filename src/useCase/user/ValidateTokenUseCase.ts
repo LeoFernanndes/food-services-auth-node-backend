@@ -2,11 +2,11 @@ import {UserTypeOrmRepository} from "../../repository/typeOrm/user/UserTypeOrmRe
 import {BaseUseCaseInterface} from "../BaseUseCaseInterface";
 import {BadRequestException} from "../../common/exceptions/BadRequestException";
 import {config} from "dotenv"
-import {TokenInputDTO} from "../../dto/user/TokenInputDTO";
-import {TokenOutputDTO} from "../../dto/user/TokenOutputDTO";
 import {TokenEnconder} from "../../common/token/TokenEnconder";
 import {TokenExpiredError} from "jsonwebtoken";
 import {ValidationError} from "class-validator";
+import {UserDTO} from "../../dto/user/UserDTO";
+import {TokenDTO} from "../../dto/user/TokenDTO";
 
 
 config();
@@ -18,7 +18,7 @@ export class ValidateTokenUseCase implements BaseUseCaseInterface{
         this.repository = repository;
     }
 
-    async execute(tokenInputDTO: TokenInputDTO): Promise<TokenOutputDTO> {
+    async execute(tokenInputDTO: TokenDTO): Promise<UserDTO> {
         try {
             return TokenEnconder.decode(tokenInputDTO)
         } catch (error){

@@ -1,7 +1,6 @@
-import {UserInputDTO} from "../../dto/user/UserInputDTO";
-import {UserOutputDTO} from "../../dto/user/UserOutputDTO";
 import {UserTypeOrmRepository} from "../../repository/typeOrm/user/UserTypeOrmRepository";
 import {BaseUseCaseInterface} from "../BaseUseCaseInterface";
+import {UserDTO} from "../../dto/user/UserDTO";
 
 
 export class UpdateUserUseCase implements BaseUseCaseInterface{
@@ -10,7 +9,7 @@ export class UpdateUserUseCase implements BaseUseCaseInterface{
         this.repository = repository;
     }
 
-    async execute(id: number| string, userDTO: UserInputDTO): Promise<UserOutputDTO> {
+    async execute(id: number| string, userDTO: UserDTO): Promise<UserDTO> {
         return this.repository.update(id, userDTO)
     }
 }
