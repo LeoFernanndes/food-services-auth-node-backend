@@ -10,7 +10,6 @@ export class UserOrmDTO<DataClass extends BaseDataClass, Entity> extends BaseOrm
 
     constructor(dataClass: DataClass, dataclassType: {new():DataClass}, entityType: {new():Entity}, allowedFieldNames?: string[]) {
         super(dataClass, dataclassType, entityType, allowedFieldNames?allowedFieldNames:['id', 'firstName', 'lastName', 'age', 'userName']);
-        this.entity = this.generateEntity(entityType);
 
         if (this._allowedFieldNames.includes('password')){
             this.validatedData['password'] = this.hashPassword(this.validatedData['password']);
