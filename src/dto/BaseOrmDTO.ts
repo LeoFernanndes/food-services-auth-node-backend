@@ -1,14 +1,20 @@
+import {BaseDataClass} from "./BaseDataClass";
 import {BaseDTO} from "./BaseDTO";
 
 
-export abstract class BaseOrmDTO extends BaseDTO{
-    public readonly abstract entity;
+export abstract class BaseOrmDTO<DataClass extends BaseDataClass, Entity> extends BaseDTO<DataClass> {
+    public readonly entity;
 
-    public generateEntity<T>(type: {new(): T}): T {
-        const user = new type();
+    protected constructor(dataClass: DataClass, dataclassType: {new():DataClass}, entityType: {new():Entity}, allowedFieldNames: string[]) {
+        super(dataClass, dataclassType, allowedFieldNames);
+        this.entity = this.generateEntity(entityType)
+    }
+
+    public generateEntity<Entity>(type: {new(): Entity}): Entity {
+        const entity = new type();
         this._allowedFieldNames.forEach(field => {
-            user[field] = this.validatedData[field]
+            entity[field] = this.validatedData[field]
         })
-        return user
+        return entity
     }
 }

@@ -20,6 +20,10 @@ import { v4 as uuidV4 } from "uuid"
 import {UserDTO} from "../../dto/user/UserDTO";
 import {LoginDTO} from "../../dto/user/LoginDTO";
 import {TokenDTO} from "../../dto/user/TokenDTO";
+import {UserOrmDTO} from "../../dto/user/UserOrmDTO";
+import {User} from "../../entity/User";
+import {LoginDTO} from "../../dto/user/LoginDTO";
+import {TokenDTO} from "../../dto/user/TokenDTO";
 
 
 // TODO: decide where and how to validate data by instantiating new DTO inside routes
@@ -30,12 +34,11 @@ router.use(decodeTokenMiddleware)
 
 router.post('/', validatePayloadMiddleware(new UserDataClass()), async (req, res) => {
     const payloadUser = req.body
-    const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(AppDataSource);
-    const createUserUseCase: CreateUserUseCase = new CreateUserUseCase(usersRepository);
-    // const userDTO: UserDTO = new UserDTO(payloadUser, ['id', 'firstName', 'lastName', 'age', 'userName', 'password']);
-    const userDTO: UserDTO = new UserDTO(payloadUser)
+    const usersRepository = new UserTypeOrmRepository(AppDataSource);
+    const createUserUseCase = new CreateUserUseCase(usersRepository);
+    const userDTO = new UserOrmDTO<UserDataClass, User>(payloadUser, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName', 'password']);
     try {
-        const createdUserDTO: UserDTO = await createUserUseCase.execute(userDTO);
+        const createdUserDTO = await createUserUseCase.execute(userDTO);
         const plainObjectResponse = createdUserDTO.validatedData
 
         const rabbitMQMessage = {
@@ -59,11 +62,11 @@ router.post('/', validatePayloadMiddleware(new UserDataClass()), async (req, res
 // TODO: make login error messages the same to avoid data leakage
 router.post('/login', validatePayloadMiddleware(new LoginDataClass()), async (req, res) => {
     const payloadLogin = req.body
-    const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(AppDataSource);
-    const loginUserUseCase: LoginUserUseCase = new LoginUserUseCase(usersRepository);
-    const loginInputDTO: LoginDTO = new LoginDTO(payloadLogin);
+    const usersRepository= new UserTypeOrmRepository(AppDataSource);
+    const loginUserUseCase = new LoginUserUseCase(usersRepository);
+    const loginInputDTO = new LoginDTO<LoginDataClass>(payloadLogin, LoginDataClass);
     try {
-        const loginOutputDTO: TokenDTO = await loginUserUseCase.execute(loginInputDTO);
+        const loginOutputDTO = await loginUserUseCase.execute(loginInputDTO);
         const plainObjectResponse = loginOutputDTO.validatedData
 
         const rabbitMQMessage = {
@@ -88,11 +91,11 @@ router.post('/login', validatePayloadMiddleware(new LoginDataClass()), async (re
 
 router.post('/validate-token', validatePayloadMiddleware(new TokenDataClass()), async (req, res) => {
     const payloadToken = req.body
-    const tokenInputDTO: TokenDTO = new TokenDTO(payloadToken);
-    const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(AppDataSource);
-    const validateTokenUseCase: ValidateTokenUseCase = new ValidateTokenUseCase(usersRepository);
+    const tokenInputDTO = new TokenDTO<TokenDataClass>(payloadToken, TokenDataClass);
+    const usersRepository = new UserTypeOrmRepository(AppDataSource);
+    const validateTokenUseCase = new ValidateTokenUseCase(usersRepository);
     try {
-        const tokenOutputDTO: UserDTO = await validateTokenUseCase.execute(tokenInputDTO);
+        const tokenOutputDTO = await validateTokenUseCase.execute(tokenInputDTO);
         const plainObjectResponse = tokenOutputDTO.validatedData
 
         const rabbitMQMessage = {
@@ -115,9 +118,9 @@ router.post('/validate-token', validatePayloadMiddleware(new TokenDataClass()), 
 
 router.get('/', async (req, res) => {
     const usersRepository = new UserTypeOrmRepository(AppDataSource);
-    const listUsersUseCase: ListUsersUseCase = new ListUsersUseCase(usersRepository);
-    const users: UserDTO[] = await listUsersUseCase.execute();
-    const plainObjectsResponse: UserDataClass[] = []
+    const listUsersUseCase = new ListUsersUseCase(usersRepository);
+    const users = await listUsersUseCase.execute();
+    const plainObjectsResponse: UserDataClass[] = [];
     users.forEach(user => {
         plainObjectsResponse.push(user.validatedData)
     })
@@ -127,9 +130,9 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const userId = req.params.id
     const usersRepository = new UserTypeOrmRepository(AppDataSource);
-    const getUserByIdUseCase: GetUserByIdUseCase = new GetUserByIdUseCase(usersRepository);
+    const getUserByIdUseCase = new GetUserByIdUseCase(usersRepository);
     try {
-        const user: UserDTO = await getUserByIdUseCase.execute(userId);
+        const user = await getUserByIdUseCase.execute(userId);
         const plainObjectResponse: UserDataClass = user.validatedData
         res.status(200).json(plainObjectResponse);
     } catch (error) {
@@ -144,11 +147,11 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const userId = req.params.id
     const payloadUser = req.body
-    const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(AppDataSource);
-    const updateUserUseCase: UpdateUserUseCase = new UpdateUserUseCase(usersRepository);
-    const userDTO: UserDTO = new UserDTO(payloadUser, ['firstName', 'lastName', 'age']);
+    const usersRepository = new UserTypeOrmRepository(AppDataSource);
+    const updateUserUseCase = new UpdateUserUseCase(usersRepository);
+    const userDTO = new UserOrmDTO(payloadUser, UserDataClass, User, ['firstName', 'lastName', 'age']);
     try {
-        const createdUserDTO: UserDTO = await updateUserUseCase.execute(userId, userDTO);
+        const createdUserDTO = await updateUserUseCase.execute(userId, userDTO);
         const plainObjectResponse = createdUserDTO.validatedData
         res.status(200).json(plainObjectResponse);
     } catch (error) {
@@ -163,9 +166,9 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const userId = req.params.id
     const usersRepository = new UserTypeOrmRepository(AppDataSource);
-    const deleteUserByIdUseCase: DeleteUserByIdUseCase = new DeleteUserByIdUseCase(usersRepository);
+    const deleteUserByIdUseCase = new DeleteUserByIdUseCase(usersRepository);
     try {
-        const user: UserDTO = await deleteUserByIdUseCase.execute(userId);
+        const user = await deleteUserByIdUseCase.execute(userId);
         res.status(204).json({'detail': 'No content'});
     } catch (error) {
         if (error instanceof NotFoundException) {

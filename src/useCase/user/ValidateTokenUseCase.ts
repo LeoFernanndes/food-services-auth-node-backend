@@ -7,6 +7,11 @@ import {TokenExpiredError} from "jsonwebtoken";
 import {ValidationError} from "class-validator";
 import {UserDTO} from "../../dto/user/UserDTO";
 import {TokenDTO} from "../../dto/user/TokenDTO";
+import {TokenDTO} from "../../dto/user/TokenDTO";
+import {TokenDataClass} from "../../dto/user/dataClass/TokenDataClass";
+import {UserOrmDTO} from "../../dto/user/UserOrmDTO";
+import {UserDataClass} from "../../dto/user/dataClass/UserDataClass";
+import {User} from "../../entity/User";
 
 
 config();
@@ -18,7 +23,7 @@ export class ValidateTokenUseCase implements BaseUseCaseInterface{
         this.repository = repository;
     }
 
-    async execute(tokenInputDTO: TokenDTO): Promise<UserDTO> {
+    async execute(tokenInputDTO: TokenDTO<TokenDataClass>): Promise<UserOrmDTO<UserDataClass, User>> {
         try {
             return TokenEnconder.decode(tokenInputDTO)
         } catch (error){

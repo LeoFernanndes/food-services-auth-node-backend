@@ -1,19 +1,13 @@
+import {BaseDataClass} from "../BaseDataClass";
 import {BaseDTO} from "../BaseDTO";
-import {LoginDataClass} from "./dataClass/LoginDataClass";
 
 
-export class LoginDTO extends BaseDTO {
-    readonly _allowedFieldNames = ['userName', 'password'];
-    readonly initialData: LoginDataClass;
-    readonly validatedData: LoginDataClass;
+export class LoginDTO<DataClass extends BaseDataClass> extends BaseDTO<DataClass> {
 
-    constructor(dataClass: LoginDataClass, allowedFieldNames?: string[]) {
-        super()
-        if (allowedFieldNames) {
-            this._allowedFieldNames = allowedFieldNames;
+    constructor(dataClass: DataClass, type: {new():DataClass}, allowedFieldNames?: string[]) {
+        if(!allowedFieldNames){
+            allowedFieldNames = ['userName', 'password'];
         }
-        const newObject = this.deepCopyDataClass(dataClass, this._allowedFieldNames, LoginDataClass);
-        this.initialData = newObject;
-        this.validatedData = this.parseValidatedDataClass(newObject, LoginDataClass);
+        super(dataClass, type, allowedFieldNames);
     }
 }

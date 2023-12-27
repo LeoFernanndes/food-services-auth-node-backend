@@ -1,19 +1,13 @@
-import {TokenDataClass} from "./dataClass/TokenDataClass";
+import {BaseDataClass} from "../BaseDataClass";
 import {BaseDTO} from "../BaseDTO";
 
 
-export class TokenDTO extends BaseDTO {
-    readonly _allowedFieldNames = ['token'];
-    readonly initialData: TokenDataClass;
-    readonly validatedData: TokenDataClass;
+export class TokenDTO<DataClass extends BaseDataClass> extends BaseDTO<DataClass> {
 
-    constructor(dataClass: TokenDataClass, allowedFieldNames?: string[]) {
-        super()
-        if (allowedFieldNames) {
-            this._allowedFieldNames = allowedFieldNames;
+    constructor(dataClass: DataClass, type: {new():DataClass}, allowedFieldNames?: string[]) {
+        if(!allowedFieldNames){
+            allowedFieldNames = ['token'];
         }
-        const newObject = this.deepCopyDataClass(dataClass, this._allowedFieldNames, TokenDataClass);
-        this.initialData = newObject;
-        this.validatedData = this.parseValidatedDataClass(newObject, TokenDataClass);
+        super(dataClass, type, allowedFieldNames);
     }
 }

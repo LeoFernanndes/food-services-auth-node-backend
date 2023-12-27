@@ -4,6 +4,8 @@ import {CreateUserUseCase} from "../CreateUserUseCase";
 import {UserDataClass} from "../../../dto/user/dataClass/UserDataClass";
 import {DataSource} from "typeorm";
 import {UserDTO} from "../../../dto/user/UserDTO";
+import {UserOrmDTO} from "../../../dto/user/UserOrmDTO";
+import {User} from "../../../entity/User";
 
 
 let dataSource: DataSource;
@@ -29,8 +31,8 @@ describe("test create user usecase", () => {
 
         const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(dataSource);
         const createUserUseCase: CreateUserUseCase = new CreateUserUseCase(usersRepository);
-        const userDTO: UserDTO = new UserDTO(userDataInterface, ['id', 'firstName', 'lastName', 'age', 'userName', 'password']);
-        const createdUserDTO: UserDTO = await createUserUseCase.execute(userDTO);
+        const userDTO = new UserOrmDTO<UserDataClass, User>(userDataInterface, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName', 'password']);
+        const createdUserDTO = await createUserUseCase.execute(userDTO);
         const plainObjectResponse = createdUserDTO.validatedData
 
         expect(plainObjectResponse.id).toBe(1)
@@ -52,9 +54,9 @@ describe("test create user usecase", () => {
 
         const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(dataSource);
         const createUserUseCase: CreateUserUseCase = new CreateUserUseCase(usersRepository);
-        const userDTO: UserDTO = new UserDTO(userDataInterface);
+        const userDTO = new UserOrmDTO<UserDataClass, User>(userDataInterface, UserDataClass, User);
         try {
-            const createdUserDTO: UserDTO = await createUserUseCase.execute(userDTO);
+            const createdUserDTO= await createUserUseCase.execute(userDTO);
         } catch (error) {
             expect(error.message).toEqual('SQLITE_CONSTRAINT: NOT NULL constraint failed: user.password');
         }
@@ -66,9 +68,9 @@ describe("test create user usecase", () => {
 
         const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(dataSource);
         const createUserUseCase: CreateUserUseCase = new CreateUserUseCase(usersRepository);
-        const userDTO: UserDTO = new UserDTO(userDataInterface);
+        const userDTO = new UserOrmDTO<UserDataClass, User>(userDataInterface, UserDataClass, User);
         try {
-            const createdUserDTO: UserDTO = await createUserUseCase.execute(userDTO);
+            const createdUserDTO= await createUserUseCase.execute(userDTO);
         } catch (error) {
             expect(error.message).toContain('SQLITE_CONSTRAINT: NOT NULL constraint failed');
         }

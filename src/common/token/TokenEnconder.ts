@@ -2,19 +2,23 @@ import jsonwebtoken, {JwtPayload} from "jsonwebtoken";
 import {UserDataClass} from "../../dto/user/dataClass/UserDataClass";
 import {UserDTO} from "../../dto/user/UserDTO";
 import {TokenDTO} from "../../dto/user/TokenDTO";
+import {TokenDTO} from "../../dto/user/TokenDTO";
+import {TokenDataClass} from "../../dto/user/dataClass/TokenDataClass";
+import {UserOrmDTO} from "../../dto/user/UserOrmDTO";
+import {User} from "../../entity/User";
 
 // TODO: Center configuration variables in one file
 const JWT_SECRET = process.env.JWT_SECRET || "AXFZqb2QzfK1x4by7SIhhkrs9ucYmtd5"
 
 export class TokenEnconder {
-    static encode(userDTO: UserDTO, expirationTimeSeconds: number): TokenDTO {
+    static encode(userDTO: UserOrmDTO<UserDataClass, User>, expirationTimeSeconds: number): TokenDTO<TokenDataClass> {
         const token = jsonwebtoken.sign({
             data: userDTO.validatedData
         }, JWT_SECRET, { expiresIn: Math.trunc(expirationTimeSeconds) });
-        return new TokenDTO({token: token})
+        return new TokenDTO<TokenDataClass>({token: token}, TokenDataClass);
     }
 
-    static decode(loginOutputDTO: TokenDTO): UserDTO {
+    static decode(loginOutputDTO: TokenDTO<TokenDataClass>): UserOrmDTO<UserDataClass, User> {
         const authData = jsonwebtoken.verify(loginOutputDTO.validatedData.token, JWT_SECRET)
         let returnedUserData: UserDataClass = {
             id: 0,
@@ -28,6 +32,6 @@ export class TokenEnconder {
             returnedUserData[property] = authData['data'][property]
         }
         returnedUserData['password'] = 'paswodPlacerolder'
-        return new UserDTO(returnedUserData, ['id', 'firstName', 'lastName', 'age', 'userName'])
+        return new UserOrmDTO<UserDataClass, User>(returnedUserData, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName']);
     }
 }
