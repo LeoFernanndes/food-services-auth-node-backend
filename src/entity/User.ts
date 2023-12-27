@@ -1,8 +1,9 @@
 import {Entity, PrimaryGeneratedColumn, Column, Unique} from "typeorm"
+import {BaseEntityInterface} from "./BaseEntityInterface";
 
 
 @Entity()
-export class User {
+export class User implements BaseEntityInterface{
 
     @PrimaryGeneratedColumn()
     id: number

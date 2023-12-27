@@ -1,16 +1,17 @@
 import {initDbStoreForTests} from "../../../testDataSource";
 import {UserTypeOrmRepository} from "../../../repository/typeOrm/user/UserTypeOrmRepository";
 import {CreateUserUseCase} from "../CreateUserUseCase";
-import {UserInputDTO} from "../../../dto/user/UserInputDTO";
-import {UserOutputDTO} from "../../../dto/user/UserOutputDTO";
-import {UserDataClass} from "../../../dto/user/UserDataClass";
+import {UserDataClass} from "../../../dto/user/dataClass/UserDataClass";
 import {DataSource} from "typeorm";
 import {LoginUserUseCase} from "../LoginUserUseCase";
-import {LoginInputDTO} from "../../../dto/user/LoginInputDTO";
 import {ValidateTokenUseCase} from "../ValidateTokenUseCase";
-import {TokenInputDTO} from "../../../dto/user/TokenInputDTO";
 import {BadRequestException} from "../../../common/exceptions/BadRequestException";
-import e from "express";
+import {LoginDTO} from "../../../dto/user/LoginDTO";
+import {TokenDTO} from "../../../dto/user/TokenDTO";
+import {UserOrmDTO} from "../../../dto/user/UserOrmDTO";
+import {User} from "../../../entity/User";
+import {TokenDataClass} from "../../../dto/user/dataClass/TokenDataClass";
+import {LoginDataClass} from "../../../dto/user/dataClass/LoginDataClass";
 
 
 let dataSource: DataSource;
@@ -34,14 +35,14 @@ describe("test validate token usecase", () => {
             password: 'password'
         }
 
-        const userDTO: UserInputDTO = new UserInputDTO(userDataInterface);
+        const userDTO = new UserOrmDTO<UserDataClass, User>(userDataInterface, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName', 'password']);
         const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(dataSource);
 
         const createUserUseCase: CreateUserUseCase = new CreateUserUseCase(usersRepository);
-        const createdUserDTO: UserOutputDTO = await createUserUseCase.execute(userDTO);
+        const createdUserDTO = await createUserUseCase.execute(userDTO);
 
         const loginUserUseCase = new LoginUserUseCase(usersRepository);
-        const loginInputDTO = new LoginInputDTO({userName: 'username', password: 'password'})
+        const loginInputDTO = new LoginDTO({userName: 'username', password: 'password'}, LoginDataClass);
         const loginOutputDTO = await loginUserUseCase.execute(loginInputDTO)
         expect(loginOutputDTO.validatedData.token).toBeDefined();
 
@@ -66,7 +67,7 @@ describe("test validate token usecase", () => {
         const expiredToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoxLCJmaXJzdE5hbWUiOiJmaXJzdCBuYW1lIiwibGFzdE5hbWUiOiJsYXN0IG5hbWUiLCJhZ2UiOjIwLCJ1c2VyTmFtZSI6InVzZXJuYW1lMSJ9LCJpYXQiOjE3MDI0MjkzODksImV4cCI6MTcwMjQyOTQ0OX0.2dTXOjwnR4R0AZRQc8HcIqAbtvX45dvJGqR_diwFp2Q'
 
         const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(dataSource);
-        const tokenInputDTO = new TokenInputDTO({token: expiredToken});
+        const tokenInputDTO = new TokenDTO({token: expiredToken}, TokenDataClass);
         const validateTokenUseCase = new ValidateTokenUseCase(usersRepository);
         await validateTokenUseCase.execute(tokenInputDTO).catch(error => {
             expect(error).toBeInstanceOf(BadRequestException)
@@ -79,7 +80,7 @@ describe("test validate token usecase", () => {
         const expiredToken = 'invalidtoken'
 
         const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(dataSource);
-        const tokenInputDTO = new TokenInputDTO({token: expiredToken});
+        const tokenInputDTO = new TokenDTO({token: expiredToken}, TokenDataClass);
         const validateTokenUseCase = new ValidateTokenUseCase(usersRepository);
         await validateTokenUseCase.execute(tokenInputDTO).catch(error => {
             expect(error).toBeInstanceOf(BadRequestException)

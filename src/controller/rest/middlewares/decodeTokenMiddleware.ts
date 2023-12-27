@@ -3,8 +3,9 @@ import {config} from "dotenv";
 import {FSExpressRequest} from "../FSExpressRequest";
 import {ValidateTokenUseCase} from "../../../useCase/user/ValidateTokenUseCase";
 import {UserTypeOrmRepository} from "../../../repository/typeOrm/user/UserTypeOrmRepository";
-import {TokenInputDTO} from "../../../dto/user/TokenInputDTO";
 import {AppDataSource} from "../../../DataSource";
+import {TokenDTO} from "../../../dto/user/TokenDTO";
+import {TokenDataClass} from "../../../dto/user/dataClass/TokenDataClass";
 
 
 config();
@@ -15,7 +16,7 @@ export async function decodeTokenMiddleware(req: FSExpressRequest, res: Response
     if(token){
         try {
             const parsedToken = token.split('Bearer ')[1]
-            const tokenInputDTO = new TokenInputDTO({token: parsedToken})
+            const tokenInputDTO = new TokenDTO({token: parsedToken}, TokenDataClass)
             const userTypeormRepository = new UserTypeOrmRepository(AppDataSource)
             const validateTokenUseCase = new ValidateTokenUseCase(userTypeormRepository)
             const tokenOutputDTO = await validateTokenUseCase.execute(tokenInputDTO)

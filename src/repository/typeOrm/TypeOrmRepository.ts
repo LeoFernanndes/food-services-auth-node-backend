@@ -1,23 +1,23 @@
 import {BaseRepositoryInterface} from "../BaseRepositoryInterface";
 import { Repository} from "typeorm";
-import {BaseInputDTO} from "../../dto/BaseInputDTO";
-import {BaseOutputDTO} from "../../dto/BaseOutputDTO";
+import {BaseOrmDTO} from "../../dto/BaseOrmDTO";
+import {BaseDataClass} from "../../dto/BaseDataClass";
 
 
-export abstract class TypeOrmRepository<TypeOrmEntity, InputDTO extends BaseInputDTO, OutputDTO extends BaseOutputDTO> implements BaseRepositoryInterface {
+export abstract class TypeOrmRepository<TypeOrmEntity, DTO extends BaseOrmDTO<BaseDataClass, any>> implements BaseRepositoryInterface {
     readonly repository: Repository<TypeOrmEntity>;
 
     protected constructor(repository: Repository<TypeOrmEntity>) {
         this.repository = repository
     }
 
-    abstract getById(id: number | string): Promise<OutputDTO>
+    abstract getById(id: number | string): Promise<DTO>
 
-    abstract getAll(): Promise<OutputDTO[]>
+    abstract getAll(): Promise<DTO[]>
 
-    abstract create(baseDTO: InputDTO): Promise<OutputDTO>
+    abstract create(baseDTO: DTO): Promise<DTO>
 
-    abstract deleteById(id: any): Promise<OutputDTO>
+    abstract deleteById(id: any): Promise<DTO>
 
-    abstract update(id: any, baseDTO: InputDTO): Promise<OutputDTO>
+    abstract update(id: any, baseDTO: DTO): Promise<DTO>
 }
