@@ -5,8 +5,6 @@ import {config} from "dotenv"
 import {TokenEnconder} from "../../common/token/TokenEnconder";
 import {TokenExpiredError} from "jsonwebtoken";
 import {ValidationError} from "class-validator";
-import {UserDTO} from "../../dto/user/UserDTO";
-import {TokenDTO} from "../../dto/user/TokenDTO";
 import {TokenDTO} from "../../dto/user/TokenDTO";
 import {TokenDataClass} from "../../dto/user/dataClass/TokenDataClass";
 import {UserOrmDTO} from "../../dto/user/UserOrmDTO";

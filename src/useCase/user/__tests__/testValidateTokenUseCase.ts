@@ -6,14 +6,11 @@ import {DataSource} from "typeorm";
 import {LoginUserUseCase} from "../LoginUserUseCase";
 import {ValidateTokenUseCase} from "../ValidateTokenUseCase";
 import {BadRequestException} from "../../../common/exceptions/BadRequestException";
-import {UserDTO} from "../../../dto/user/UserDTO";
 import {LoginDTO} from "../../../dto/user/LoginDTO";
 import {TokenDTO} from "../../../dto/user/TokenDTO";
 import {UserOrmDTO} from "../../../dto/user/UserOrmDTO";
 import {User} from "../../../entity/User";
-import {TokenDTO} from "../../../dto/user/TokenDTO";
 import {TokenDataClass} from "../../../dto/user/dataClass/TokenDataClass";
-import {LoginDTO} from "../../../dto/user/LoginDTO";
 import {LoginDataClass} from "../../../dto/user/dataClass/LoginDataClass";
 
 

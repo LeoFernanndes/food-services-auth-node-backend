@@ -1,7 +1,5 @@
 import jsonwebtoken, {JwtPayload} from "jsonwebtoken";
 import {UserDataClass} from "../../dto/user/dataClass/UserDataClass";
-import {UserDTO} from "../../dto/user/UserDTO";
-import {TokenDTO} from "../../dto/user/TokenDTO";
 import {TokenDTO} from "../../dto/user/TokenDTO";
 import {TokenDataClass} from "../../dto/user/dataClass/TokenDataClass";
 import {UserOrmDTO} from "../../dto/user/UserOrmDTO";

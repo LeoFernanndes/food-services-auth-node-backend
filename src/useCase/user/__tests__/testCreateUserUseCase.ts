@@ -3,7 +3,6 @@ import {UserTypeOrmRepository} from "../../../repository/typeOrm/user/UserTypeOr
 import {CreateUserUseCase} from "../CreateUserUseCase";
 import {UserDataClass} from "../../../dto/user/dataClass/UserDataClass";
 import {DataSource} from "typeorm";
-import {UserDTO} from "../../../dto/user/UserDTO";
 import {UserOrmDTO} from "../../../dto/user/UserOrmDTO";
 import {User} from "../../../entity/User";
 

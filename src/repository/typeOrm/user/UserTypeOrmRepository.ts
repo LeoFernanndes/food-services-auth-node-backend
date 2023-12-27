@@ -3,8 +3,6 @@ import {TypeOrmRepository} from "../TypeOrmRepository";
 import {NotFoundException} from "../../../common/exceptions/NotFoundException";
 import {DataSource} from "typeorm";
 import {BadRequestException} from "../../../common/exceptions/BadRequestException";
-import {UserDTO} from "../../../dto/user/UserDTO";
-import {QueryFailedError} from "typeorm/browser";
 import {UserOrmDTO} from "../../../dto/user/UserOrmDTO";
 import {UserDataClass} from "../../../dto/user/dataClass/UserDataClass";
 
