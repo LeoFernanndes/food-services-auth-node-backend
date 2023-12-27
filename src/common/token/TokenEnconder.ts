@@ -30,6 +30,6 @@ export class TokenEnconder {
             returnedUserData[property] = authData['data'][property]
         }
         returnedUserData['password'] = 'paswodPlacerolder'
-        return new UserOrmDTO<UserDataClass>(returnedUserData, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName']);
+        return new UserOrmDTO<UserDataClass, User>(returnedUserData, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName']);
     }
 }

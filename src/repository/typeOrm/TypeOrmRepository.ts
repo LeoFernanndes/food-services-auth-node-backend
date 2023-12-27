@@ -1,6 +1,5 @@
 import {BaseRepositoryInterface} from "../BaseRepositoryInterface";
 import { Repository} from "typeorm";
-import {BaseDTO} from "../../dto/BaseDTO";
 import {BaseOrmDTO} from "../../dto/BaseOrmDTO";
 import {BaseDataClass} from "../../dto/BaseDataClass";
 

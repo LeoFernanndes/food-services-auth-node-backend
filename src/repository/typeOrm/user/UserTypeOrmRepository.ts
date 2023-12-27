@@ -21,7 +21,7 @@ export class UserTypeOrmRepository extends TypeOrmRepository<User, UserOrmDTO<Us
         if (!retrievedEntity){
             throw new NotFoundException(`User with id ${id} was not found`);
         }
-        return new UserOrmDTO<UserDataClass>(retrievedEntity, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName']);
+        return new UserOrmDTO<UserDataClass, User>(retrievedEntity, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName']);
     }
 
     async getByUsername(username: any): Promise<UserOrmDTO<UserDataClass, User>> {
@@ -29,7 +29,7 @@ export class UserTypeOrmRepository extends TypeOrmRepository<User, UserOrmDTO<Us
         if (!retrievedEntity){
             throw new NotFoundException(`User with username ${username} was not found`);
         }
-        return new UserOrmDTO<UserDataClass>(retrievedEntity, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName', 'password'])
+        return new UserOrmDTO<UserDataClass, User>(retrievedEntity, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName', 'password'])
 
     }
 
@@ -47,7 +47,7 @@ export class UserTypeOrmRepository extends TypeOrmRepository<User, UserOrmDTO<Us
         const entityToBePersisted: User = userDTO.entity
         try {
             const createdEntity = await this.repository.save(entityToBePersisted);
-            return new UserOrmDTO<UserDataClass>(createdEntity, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName']);
+            return new UserOrmDTO<UserDataClass, User>(createdEntity, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName']);
         } catch (error) {
             if (error.message.includes('duplicate key value')){
                 throw new BadRequestException(`${error.detail}`)
@@ -68,7 +68,7 @@ export class UserTypeOrmRepository extends TypeOrmRepository<User, UserOrmDTO<Us
         try {
             await this.repository.createQueryBuilder().update(User).set(userToBeUpdatedEntity).where("id = :id", { id: id }).execute();
             const updatedUserResult = await this.repository.findOneBy({id: id})
-            return new UserOrmDTO<UserDataClass>(updatedUserResult, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName']);
+            return new UserOrmDTO<UserDataClass, User>(updatedUserResult, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName']);
             // return new UserDTO(updatedUserResult, ['id', 'firstName', 'lastName', 'age', 'userName'])
         } catch (error) {
             throw new Error('Unprocessable entity')
@@ -81,7 +81,7 @@ export class UserTypeOrmRepository extends TypeOrmRepository<User, UserOrmDTO<Us
             throw new NotFoundException(`User with id ${id} was not found`)
         }
         await this.repository.delete({id: id})
-        return new UserOrmDTO<UserDataClass>(userToBeDeleted, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName']);
+        return new UserOrmDTO<UserDataClass, User>(userToBeDeleted, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName']);
     }
 }
 
