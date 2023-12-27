@@ -1,5 +1,4 @@
 import {BaseDTO} from "../dto/BaseDTO";
-import {BaseDTO} from "../dto/BaseDTO";
 import {BaseDataClass} from "../dto/BaseDataClass";
 
 
