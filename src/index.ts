@@ -6,6 +6,8 @@ import "reflect-metadata";
 import {logPayloadMiddleware} from "./controller/rest/middlewares/logPayloadMiddleware";
 import createMQProducer from "./infra/amqp/producer";
 import createMQConsumer from "./infra/amqp/consumer";
+import swaggerUi from "swagger-ui-express";
+import  * as swaggerFile from "../swagger-output.json";
 
 
 AppDataSource.initialize().then(async () => {
@@ -28,10 +30,11 @@ export const rabbitMQConsumer = createMQConsumer(`amqp://${rabbitMQUser}:${rabbi
 export const rabbitMQProducer = createMQProducer(`amqp://${rabbitMQUser}:${rabbitMQPassword}@${rabbitMQHost}:${rabbitMQPort}`, rabbitMQQueueName);
 
 
-rabbitMQConsumer()
-app.use(express.json())
-app.use(logPayloadMiddleware)
-app.use('/users', UserExpressRouter)
+rabbitMQConsumer();
+app.use(express.json());
+app.use(logPayloadMiddleware);
+app.use('/users', UserExpressRouter);
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 
 app.listen(port, () => {

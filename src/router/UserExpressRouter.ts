@@ -17,6 +17,32 @@ export const router = express.Router();
 router.use(decodeTokenMiddleware)
 
 router.post('/', async (req,res) => {
+    /* 
+        #swagger.description = 'Endpoint to create User' */
+
+    /*  #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/definitions/UserCreate"
+                    }  
+                }
+            }
+        } 
+    */
+
+    /* #swagger.responses[201] = {
+            description: "Created",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/definitions/User"
+                    }
+                }           
+            }
+        }   
+    */
     const request = new FSControllerRequest(req.body, req.headers, req.params, req.query);
     const userController = new UserController(request, {messageDispatcher: rabbitMQProducer});
     const response = await userController.createUser();
@@ -24,6 +50,20 @@ router.post('/', async (req,res) => {
 })
 
 router.get('/', async (req, res) => {
+    /* 
+        #swagger.description = 'Endpoint to list Users' */
+
+    /* #swagger.responses[200] = {
+            description: "OK",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/definitions/Users"
+                    }
+                }           
+            }
+        }   
+    */
     const request = new FSControllerRequest(req.body, req.headers, req.params, req.query);
     const userController = new UserController(request, {messageDispatcher: rabbitMQProducer});
     const response = await userController.listUsers();
@@ -31,6 +71,20 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
+    /* 
+        #swagger.description = 'Endpoint to retrive User' */
+
+    /* #swagger.responses[200] = {
+            description: "OK",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/definitions/User"
+                    }
+                }           
+            }
+        }   
+    */
     const request = new FSControllerRequest(req.body, req.headers, req.params, req.query);
     const userController = new UserController(request, {messageDispatcher: rabbitMQProducer});
     const response = await userController.getUserById();
@@ -38,6 +92,32 @@ router.get('/:id', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
+    /* 
+        #swagger.description = 'Endpoint to update Users' */
+
+            /*  #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/definitions/UserUpdate"
+                    }  
+                }
+            }
+        } 
+    */
+
+    /* #swagger.responses[200] = {
+            description: "OK",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/definitions/User"
+                    }
+                }           
+            }
+        }   
+    */
     const request = new FSControllerRequest(req.body, req.headers, req.params, req.query);
     const userController = new UserController(request, {messageDispatcher: rabbitMQProducer});
     const response = await userController.updateUserByID();
@@ -45,6 +125,13 @@ router.put('/:id', async (req, res) => {
 });
 
 router.delete('/:id', async (req, res) => {
+        /* 
+        #swagger.description = 'Endpoint to delete Users' */
+
+    /* #swagger.responses[204] = {
+            description: "No Content"
+        }   
+    */
     const request = new FSControllerRequest(req.body, req.headers, req.params, req.query);
     const userController = new UserController(request, {messageDispatcher: rabbitMQProducer});
     const response = await userController.deleteUserById();
@@ -52,6 +139,32 @@ router.delete('/:id', async (req, res) => {
 });
 
 router.post('/login', validatePayloadMiddleware(new LoginDataClass()), async (req, res) => {
+        /* 
+        #swagger.description = 'Endpoint to login User' */
+
+    /*  #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/definitions/Login"
+                    }  
+                }
+            }
+        } 
+    */
+
+    /* #swagger.responses[200] = {
+            description: "OK",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/definitions/Token"
+                    }
+                }           
+            }
+        }   
+    */
     const request = new FSControllerRequest(req.body, req.headers, req.params, req.query);
     const authenticationController = new AuthenticationController(request, {messageDispatcher: rabbitMQProducer});
     const response = await authenticationController.login();
@@ -59,6 +172,32 @@ router.post('/login', validatePayloadMiddleware(new LoginDataClass()), async (re
 });
 
 router.post('/validate-token', validatePayloadMiddleware(new TokenDataClass()), async (req, res) => {
+            /* 
+        #swagger.description = 'Endpoint to validate User auth token' */
+
+    /*  #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/definitions/Token"
+                    }  
+                }
+            }
+        } 
+    */
+
+    /* #swagger.responses[200] = {
+            description: "OK",
+            content: {
+                "application/json": {
+                    schema:{
+                        $ref: "#/definitions/User"
+                    }
+                }           
+            }
+        }   
+    */
     const request = new FSControllerRequest(req.body, req.headers, req.params, req.query);
     const authenticationController = new AuthenticationController(request, {messageDispatcher: rabbitMQProducer});
     const response = await authenticationController.validateToken();
