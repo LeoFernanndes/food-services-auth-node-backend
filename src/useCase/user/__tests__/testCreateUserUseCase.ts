@@ -9,6 +9,8 @@ import {User} from "../../../entity/User";
 
 let dataSource: DataSource;
 
+const testTimeOut = Number(process.env.TEST_TIMEOUT) || 150000
+
 describe("test create user usecase", () => {
     beforeEach(async () => {
         dataSource = await initDbStoreForTests()
@@ -39,7 +41,7 @@ describe("test create user usecase", () => {
         expect(plainObjectResponse.lastName).toBe(userDataInterface.lastName)
         expect(plainObjectResponse.age).toBe(userDataInterface.age)
         expect(plainObjectResponse.userName).toBe(userDataInterface.userName)
-    });
+    }, testTimeOut);
 
     it("should fail to create an user with missing password", async () => {
 

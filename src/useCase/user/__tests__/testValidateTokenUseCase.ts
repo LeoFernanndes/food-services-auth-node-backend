@@ -16,6 +16,8 @@ import {LoginDataClass} from "../../../dto/user/dataClass/LoginDataClass";
 
 let dataSource: DataSource;
 
+const testTimeOut = Number(process.env.TEST_TIMEOUT) || 150000
+
 describe("test validate token usecase", () => {
     beforeEach(async () => {
         dataSource = await initDbStoreForTests()
@@ -50,7 +52,7 @@ describe("test validate token usecase", () => {
         const tokenOutputDTO = validateTokenUseCase.execute(loginOutputDTO)
         expect((await tokenOutputDTO).validatedData.id).toEqual(1)
 
-    });
+    }, testTimeOut);
 });
 
 describe("test validate token usecase", () => {

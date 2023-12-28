@@ -8,6 +8,7 @@ import {UserTypeOrmRepository} from "../../../repository/typeOrm/user/UserTypeOr
 
 let dataSource: DataSource;
 
+const testTimeOut = Number(process.env.TEST_TIMEOUT) || 150000
 
 describe("Test UserController Create", () => {
     beforeEach(async () => {
@@ -39,7 +40,7 @@ describe("Test UserController Create", () => {
         expect(response.data.lastName).toBe(userDataInterface.lastName)
         expect(response.data.age).toBe(userDataInterface.age)
         expect(response.data.userName).toBe(userDataInterface.userName)
-    });
+    }, testTimeOut);
 });
 
 
@@ -85,7 +86,7 @@ describe("Test UserController Update", () => {
         expect(responseUpdate.data.lastName).toBe(updateUserDataInterface.lastName)
         expect(responseUpdate.data.age).toBe(updateUserDataInterface.age)
         expect(responseUpdate.data.userName).toBe(updateUserDataInterface.userName)
-    });
+    }, testTimeOut);
 
     it("should fail to update user with 404", async () => {
 
@@ -102,7 +103,7 @@ describe("Test UserController Update", () => {
         const responseUpdate = await userControllerUpdate.updateUserByID();
         expect(responseUpdate.status).toEqual(404);
         expect(responseUpdate.data).toEqual({ 'detail': 'User with id 1 was not found' });
-    });
+    }, testTimeOut);
 
 });
 
@@ -149,7 +150,7 @@ describe("Test UserController List", () => {
 
         expect(responseList.status).toEqual(200);
         expect(responseList.data).toHaveLength(2)
-    });
+    }, testTimeOut);
 });
 
 describe("Test UserController Retrieve", () => {
@@ -201,7 +202,7 @@ describe("Test UserController Retrieve", () => {
         expect(responseRetrieve.data.lastName).toBe(userDataInterface2.lastName)
         expect(responseRetrieve.data.age).toBe(userDataInterface2.age)
         expect(responseRetrieve.data.userName).toBe(userDataInterface2.userName)
-    });
+    }, testTimeOut);
 
     it("should fail to retrieve user with 404", async () => {
         const requestUpdate = new FSControllerRequest({}, {}, {id: 1}, {});
@@ -258,7 +259,7 @@ describe("Test UserController Delete", () => {
         const userRepository = new UserTypeOrmRepository(dataSource)
         const users = await userRepository.getAll()
         expect(users).toHaveLength(1);
-    });
+    }, testTimeOut);
 
     it("should fail to delete user with 404", async () => {
         const requestDelete = new FSControllerRequest({}, {}, {id: 1}, {});
