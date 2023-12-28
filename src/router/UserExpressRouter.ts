@@ -54,7 +54,7 @@ router.get('/', async (req, res) => {
         #swagger.description = 'Endpoint to list Users' */
 
     /* #swagger.responses[200] = {
-            description: "OK",
+            description: "Ok",
             content: {
                 "application/json": {
                     schema:{
@@ -75,7 +75,7 @@ router.get('/:id', async (req, res) => {
         #swagger.description = 'Endpoint to retrive User' */
 
     /* #swagger.responses[200] = {
-            description: "OK",
+            description: "Ok",
             content: {
                 "application/json": {
                     schema:{
@@ -108,7 +108,7 @@ router.put('/:id', async (req, res) => {
     */
 
     /* #swagger.responses[200] = {
-            description: "OK",
+            description: "Ok",
             content: {
                 "application/json": {
                     schema:{
@@ -155,7 +155,7 @@ router.post('/login', validatePayloadMiddleware(new LoginDataClass()), async (re
     */
 
     /* #swagger.responses[200] = {
-            description: "OK",
+            description: "Ok",
             content: {
                 "application/json": {
                     schema:{
@@ -188,7 +188,7 @@ router.post('/validate-token', validatePayloadMiddleware(new TokenDataClass()), 
     */
 
     /* #swagger.responses[200] = {
-            description: "OK",
+            description: "Ok",
             content: {
                 "application/json": {
                     schema:{
