@@ -2,6 +2,7 @@ import {BaseDataClass} from "../BaseDataClass";
 import {BaseDTO} from "../BaseDTO";
 import {BaseOrmDTO} from "../BaseOrmDTO";
 import bcrypt from "bcrypt";
+import {User} from "../../entity/User";
 
 
 export class UserOrmDTO<DataClass extends BaseDataClass, Entity> extends BaseOrmDTO<DataClass, Entity>{
@@ -14,6 +15,7 @@ export class UserOrmDTO<DataClass extends BaseDataClass, Entity> extends BaseOrm
         if (this._allowedFieldNames.includes('password')){
             this.validatedData['password'] = this.hashPassword(this.validatedData['password']);
         }
+        this.entity = this.generateEntity(User);
     }
 
     private hashPassword(password: string): string {

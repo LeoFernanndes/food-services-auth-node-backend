@@ -23,7 +23,7 @@ export class LoginUserUseCase extends BaseUseCase implements BaseUseCaseInterfac
 
     async execute(loginDTO: LoginDTO<LoginDataClass>): Promise<TokenDTO<TokenDataClass>> {
         const userDTO = await this.repository.getByUsername(loginDTO.validatedData.userName)
-        if (!bcrypt.compareSync(loginDTO.validatedData.password, userDTO.validatedData.password)){
+        if (!bcrypt.compareSync(loginDTO.validatedData.password, userDTO.initialData.password)){
             throw new BadRequestException('Invalid user password');
         }
 

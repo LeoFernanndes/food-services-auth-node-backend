@@ -22,10 +22,19 @@ describe('UserDTO right instantiation', () => {
         expect(userDTO.validatedData.lastName).toEqual(userDataInterface.lastName);
         expect(userDTO.validatedData.age).toEqual(userDataInterface.age);
         expect(userDTO.validatedData.userName).toEqual(userDataInterface.userName);
-        expect(userDTO.validatedData.password).toBeDefined();
+        expect(userDTO.validatedData.password).not.toEqual(userDataInterface.password);
+
         expect(userDTO.entity).toBeInstanceOf(User);
         expect(userDTO.validatedData).toBeInstanceOf(UserDataClass)
         expect(userDTO.initialData).toEqual(userDataInterface);
+
+        expect(userDTO.entity.id).toBeUndefined();
+        expect(userDTO.entity.firstName).toEqual(userDTO.validatedData.firstName);
+        expect(userDTO.entity.lastName).toEqual(userDTO.validatedData.lastName);
+        expect(userDTO.entity.age).toEqual(userDTO.validatedData.age);
+        expect(userDTO.entity.userName).toEqual(userDTO.validatedData.userName);
+        expect(userDTO.entity.password).toEqual(userDTO.validatedData.password);
+        expect(userDTO.validatedData).toBeInstanceOf(UserDataClass)
     });
 
 })
