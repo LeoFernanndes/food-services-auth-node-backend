@@ -9,21 +9,36 @@ import {TokenDTO} from "../../dto/user/TokenDTO";
 import {TokenDataClass} from "../../dto/user/dataClass/TokenDataClass";
 import {UserOrmDTO} from "../../dto/user/UserOrmDTO";
 import {UserDataClass} from "../../dto/user/dataClass/UserDataClass";
-import {User} from "../../entity/User";
+import {UserEntity} from "../../entity/UserEntity";
 import {BaseUseCase} from "../BaseUseCase";
+import {RabbitMqMessage} from "../../infra/amqp/RabbitMqMessage";
+import {v4 as uuidV4} from "uuid";
 
 
 config();
 
 
 export class ValidateTokenUseCase extends BaseUseCase implements BaseUseCaseInterface{
+    protected repository: UserTypeOrmRepository;
+
     constructor(repository: UserTypeOrmRepository, messageDispatcher?) {
         super(repository, messageDispatcher)
     }
 
-    async execute(tokenInputDTO: TokenDTO<TokenDataClass>): Promise<UserOrmDTO<UserDataClass, User>> {
+    async execute(tokenInputDTO: TokenDTO<TokenDataClass>): Promise<UserOrmDTO<UserDataClass, UserEntity>> {
         try {
-            return TokenEnconder.decode(tokenInputDTO)
+            const tokenOutputDTO =  TokenEnconder.decode(tokenInputDTO)
+
+            const rabbitMQMessage = {
+                id: uuidV4().toString(),
+                action: 'authValidateToken',
+                producer: 'auth',
+                data: tokenOutputDTO.validatedData
+            }
+            this.dispatchMessage(rabbitMQMessage)
+
+            return tokenOutputDTO
+
         } catch (error){
             if (error instanceof TokenExpiredError){
                 throw new BadRequestException('Expired token')

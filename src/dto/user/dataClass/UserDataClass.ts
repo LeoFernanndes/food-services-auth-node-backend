@@ -3,28 +3,22 @@ import {IsInt, IsOptional, Max, MaxLength, Min} from "class-validator";
 
 
 export class UserDataClass extends BaseDataClass {
-    @IsOptional()
     id?: number;
 
-    @IsOptional()
     @MaxLength(50)
-    firstName: string;
+    firstName?: string;
 
-    @IsOptional()
     @MaxLength(50)
-    lastName: string;
+    lastName?: string;
 
-    @IsOptional()
     @IsInt()
     @Min(0)
     @Max(150)
-    age: number;
+    age?: number;
 
-    @IsOptional()
     @MaxLength(50)
-    userName: string;
+    username?: string;
 
-    @IsOptional()
     @MaxLength(100)
-    password: string
+    password?: string
 }

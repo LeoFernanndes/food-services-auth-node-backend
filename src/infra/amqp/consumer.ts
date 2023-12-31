@@ -14,8 +14,17 @@ const createMQConsumer = (amqpURl: string, queueName: string) => {
                 }
 
                 const authExchange = process.env.RABBITMQ_AUTH_EXCHANGE || 'auth-topic-exchange';
+                chan.assertExchange(authExchange, 'topic', {
+                    durable: true
+                });
                 chan.bindQueue(queueName, authExchange, '#')
+                
                 const recipeExchange = process.env.RABBITMQ_RECIPE_EXCHANGE || 'recipe-topic-exchange';
+                chan.assertExchange(recipeExchange, 'topic', {
+                    durable: true
+                });
+
+                chan.assertQueue(queueName, {durable: true})
                 chan.bindQueue(queueName, recipeExchange, '#')
 
                 console.log('Connected to RabbitMQ')

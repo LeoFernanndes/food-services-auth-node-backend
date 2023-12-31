@@ -2,6 +2,7 @@ import { AppDataSource } from "./DataSource"
 import {config} from "dotenv";
 import express, {Express} from "express";
 import {router as UserExpressRouter} from "./router/UserExpressRouter";
+import {router as AddressExpressRouter} from "./router/AddressExpressRouter";
 import "reflect-metadata";
 import {logPayloadMiddleware} from "./controller/rest/middlewares/logPayloadMiddleware";
 import createMQProducer from "./infra/amqp/producer";
@@ -34,6 +35,7 @@ rabbitMQConsumer();
 app.use(express.json());
 app.use(logPayloadMiddleware);
 app.use('/users', UserExpressRouter);
+app.use('/addresses', AddressExpressRouter);
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 
