@@ -1,7 +1,8 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import {User} from "./entity/User";
+import {UserEntity} from "./entity/UserEntity";
 import {config} from "dotenv";
+import {AddressEntity} from "./entity/AddressEntity";
 
 config();
 
@@ -12,7 +13,8 @@ export const AppDataSource = new DataSource({
     username: process.env.DATABASE_USERNAME || "food-services-admin",
     password: process.env.DATABASE_PASSWORD || "password123",
     database: process.env.DATABASE || "food-services",
-    entities: ["dist/**/entity/**/*.js"],
-    migrations: ["dist/migration/**/*.js"],
+    // entities: ["dist/**/*/entity/*.js"],
+    entities: [UserEntity, AddressEntity],
+    migrations: ["dist/**/*/migration/**/*.js"],
     subscribers: [],
 })

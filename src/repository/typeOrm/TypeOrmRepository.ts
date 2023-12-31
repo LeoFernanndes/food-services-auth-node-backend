@@ -2,9 +2,10 @@ import {BaseRepositoryInterface} from "../BaseRepositoryInterface";
 import { Repository} from "typeorm";
 import {BaseOrmDTO} from "../../dto/BaseOrmDTO";
 import {BaseDataClass} from "../../dto/BaseDataClass";
+import {FSBaseEntity} from "../../entity/FSBaseEntity";
 
 
-export abstract class TypeOrmRepository<TypeOrmEntity, DTO extends BaseOrmDTO<BaseDataClass, any>> implements BaseRepositoryInterface {
+export abstract class TypeOrmRepository<TypeOrmEntity extends FSBaseEntity, DTO extends BaseOrmDTO<BaseDataClass, TypeOrmEntity>> implements BaseRepositoryInterface {
     readonly repository: Repository<TypeOrmEntity>;
 
     protected constructor(repository: Repository<TypeOrmEntity>) {

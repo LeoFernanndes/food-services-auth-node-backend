@@ -9,9 +9,9 @@ import {BadRequestException} from "../../../common/exceptions/BadRequestExceptio
 import {LoginDTO} from "../../../dto/user/LoginDTO";
 import {TokenDTO} from "../../../dto/user/TokenDTO";
 import {UserOrmDTO} from "../../../dto/user/UserOrmDTO";
-import {User} from "../../../entity/User";
 import {TokenDataClass} from "../../../dto/user/dataClass/TokenDataClass";
 import {LoginDataClass} from "../../../dto/user/dataClass/LoginDataClass";
+import {UserEntity} from "../../../entity/UserEntity";
 
 
 let dataSource: DataSource;
@@ -33,18 +33,19 @@ describe("test validate token usecase", () => {
             firstName: 'name',
             lastName: 'surname',
             age: 30,
-            userName: 'username',
+            username: 'username',
             password: 'password'
         }
 
-        const userDTO = new UserOrmDTO<UserDataClass, User>(userDataInterface, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName', 'password']);
+        const userDTO = new UserOrmDTO<UserDataClass, UserEntity>(userDataInterface, UserDataClass, UserEntity,
+            {dtoEntityFieldNames: ['id', 'firstName', 'lastName', 'age', 'username', 'password']});
         const usersRepository: UserTypeOrmRepository = new UserTypeOrmRepository(dataSource);
 
         const createUserUseCase: CreateUserUseCase = new CreateUserUseCase(usersRepository);
         const createdUserDTO = await createUserUseCase.execute(userDTO);
 
         const loginUserUseCase = new LoginUserUseCase(usersRepository);
-        const loginInputDTO = new LoginDTO({userName: 'username', password: 'password'}, LoginDataClass);
+        const loginInputDTO = new LoginDTO({username: 'username', password: 'password'}, LoginDataClass);
         const loginOutputDTO = await loginUserUseCase.execute(loginInputDTO)
         expect(loginOutputDTO.validatedData.token).toBeDefined();
 

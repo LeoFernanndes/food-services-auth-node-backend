@@ -1,5 +1,5 @@
 import { DataSource, DataSourceOptions } from "typeorm"
-import {User} from "./entity/User";
+import {UserEntity} from "./entity/UserEntity";
 
 export let AppDataStore: DataSource = null
 
@@ -8,7 +8,7 @@ export async function initDbStoreForTests() {
         type: "sqlite",
         database: ":memory:",
         dropSchema: true,
-        entities: [User],
+        entities: [UserEntity],
         synchronize: true,
         logging: false
     } as any;

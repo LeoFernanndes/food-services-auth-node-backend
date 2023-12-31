@@ -25,7 +25,7 @@ describe("Test UserController Create", () => {
             firstName: 'name',
             lastName: 'surname',
             age: 30,
-            userName: 'username',
+            username: 'username',
             password: 'password'
         }
 
@@ -39,7 +39,7 @@ describe("Test UserController Create", () => {
         expect(response.data.firstName).toBe(userDataInterface.firstName)
         expect(response.data.lastName).toBe(userDataInterface.lastName)
         expect(response.data.age).toBe(userDataInterface.age)
-        expect(response.data.userName).toBe(userDataInterface.userName)
+        expect(response.data.username).toBe(userDataInterface.username)
     }, testTimeOut);
 });
 
@@ -59,7 +59,7 @@ describe("Test UserController Update", () => {
             firstName: 'name',
             lastName: 'surname',
             age: 30,
-            userName: 'username',
+            username: 'username',
             password: 'password'
         }
 
@@ -72,7 +72,7 @@ describe("Test UserController Update", () => {
             firstName: 'updatedName',
             lastName: 'updatedSurname',
             age: 40,
-            userName: 'username',
+            username: 'username',
             password: 'password'
         }
 
@@ -85,7 +85,40 @@ describe("Test UserController Update", () => {
         expect(responseUpdate.data.firstName).toBe(updateUserDataInterface.firstName)
         expect(responseUpdate.data.lastName).toBe(updateUserDataInterface.lastName)
         expect(responseUpdate.data.age).toBe(updateUserDataInterface.age)
-        expect(responseUpdate.data.userName).toBe(updateUserDataInterface.userName)
+        expect(responseUpdate.data.username).toBe(updateUserDataInterface.username)
+    }, testTimeOut);
+
+    it("should successfully update an user with partial data", async () => {
+
+        const userDataInterface: UserDataClass = {
+            firstName: 'name',
+            lastName: 'surname',
+            age: 30,
+            username: 'username',
+            password: 'password'
+        }
+
+        // first creates the user to be updated
+        const request = new FSControllerRequest(userDataInterface, {}, {}, {});
+        const userController = new UserController(request, {appDataSource:dataSource});
+        const response = await userController.createUser();
+
+        const updateUserDataInterface: UserDataClass = {
+            age: 40
+        }
+
+        const requestUpdate = new FSControllerRequest(updateUserDataInterface, {}, {id: response.data.id}, {});
+        const userControllerUpdate = new UserController(requestUpdate, {appDataSource:dataSource});
+        const responseUpdate = await userControllerUpdate.updateUserByID();
+        expect(responseUpdate.status).toEqual(200);
+        expect(responseUpdate.data).toBeInstanceOf(UserDataClass);
+
+        expect(responseUpdate.data.age).toBe(updateUserDataInterface.age)
+
+        expect(responseUpdate.data.id).toBe(response.data.id);
+        expect(responseUpdate.data.firstName).toBe(response.data.firstName)
+        expect(responseUpdate.data.lastName).toBe(response.data.lastName)
+        expect(responseUpdate.data.username).toBe(response.data.username)
     }, testTimeOut);
 
     it("should fail to update user with 404", async () => {
@@ -94,7 +127,7 @@ describe("Test UserController Update", () => {
             firstName: 'updatedName',
             lastName: 'updatedSurname',
             age: 40,
-            userName: 'username',
+            username: 'username',
             password: 'password'
         }
 
@@ -122,7 +155,7 @@ describe("Test UserController List", () => {
             firstName: 'name',
             lastName: 'surname',
             age: 30,
-            userName: 'username',
+            username: 'username',
             password: 'password'
         }
 
@@ -135,7 +168,7 @@ describe("Test UserController List", () => {
             firstName: 'name',
             lastName: 'surname',
             age: 30,
-            userName: 'username1',
+            username: 'username1',
             password: 'password1'
         }
 
@@ -168,7 +201,7 @@ describe("Test UserController Retrieve", () => {
             firstName: 'name',
             lastName: 'surname',
             age: 30,
-            userName: 'username',
+            username: 'username',
             password: 'password'
         }
 
@@ -181,7 +214,7 @@ describe("Test UserController Retrieve", () => {
             firstName: 'name',
             lastName: 'surname',
             age: 30,
-            userName: 'username1',
+            username: 'username1',
             password: 'password1'
         }
 
@@ -201,7 +234,7 @@ describe("Test UserController Retrieve", () => {
         expect(responseRetrieve.data.firstName).toBe(userDataInterface2.firstName)
         expect(responseRetrieve.data.lastName).toBe(userDataInterface2.lastName)
         expect(responseRetrieve.data.age).toBe(userDataInterface2.age)
-        expect(responseRetrieve.data.userName).toBe(userDataInterface2.userName)
+        expect(responseRetrieve.data.username).toBe(userDataInterface2.username)
     }, testTimeOut);
 
     it("should fail to retrieve user with 404", async () => {
@@ -228,7 +261,7 @@ describe("Test UserController Delete", () => {
             firstName: 'name',
             lastName: 'surname',
             age: 30,
-            userName: 'username',
+            username: 'username',
             password: 'password'
         }
 
@@ -241,7 +274,7 @@ describe("Test UserController Delete", () => {
             firstName: 'name',
             lastName: 'surname',
             age: 30,
-            userName: 'username1',
+            username: 'username1',
             password: 'password1'
         }
 

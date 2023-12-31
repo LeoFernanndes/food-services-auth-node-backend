@@ -5,7 +5,7 @@ import {UserTypeOrmRepository} from "../../../repository/typeOrm/user/UserTypeOr
 import {CreateUserUseCase} from "../../../useCase/user/CreateUserUseCase";
 import {UserOrmDTO} from "../../../dto/user/UserOrmDTO";
 import {UserDataClass} from "../../../dto/user/dataClass/UserDataClass";
-import {User} from "../../../entity/User";
+import {UserEntity} from "../../../entity/UserEntity";
 import {BadRequestException} from "../../../common/exceptions/BadRequestException";
 import {ListUsersUseCase} from "../../../useCase/user/ListUsersUseCase";
 import {GetUserByIdUseCase} from "../../../useCase/user/GetUserByIdUseCase";
@@ -22,9 +22,13 @@ export class UserController extends FSController {
 
     async createUser(): Promise<FSControllerResponse> {
         const payloadUser = this.request.body;
+        const userDTO = new UserOrmDTO<UserDataClass, UserEntity>(payloadUser, UserDataClass, UserEntity,
+            {dtoEntityFieldNames: ['firstName', 'lastName', 'age', 'username', 'password', 'created', 'updated']});
+        if (this.dtoIsValid(userDTO) == false){
+            return this.response;
+        }
         const usersRepository = new UserTypeOrmRepository(this.appDataSource);
         const createUserUseCase = new CreateUserUseCase(usersRepository, this.messageDispatcher);
-        const userDTO = new UserOrmDTO<UserDataClass, User>(payloadUser, UserDataClass, User, ['id', 'firstName', 'lastName', 'age', 'userName', 'password']);
         try {
             const createdUserDTO = await createUserUseCase.execute(userDTO);
             const plainObjectResponse = createdUserDTO.validatedData
@@ -67,7 +71,7 @@ export class UserController extends FSController {
             this.response.data = plainObjectResponse;
         } catch (error) {
             if (error instanceof NotFoundException){
-                this.response.status = 400;
+                this.response.status = 404;
                 this.response.data = {'detail': error.message}
             } else {
                 this.response.status = 500;
@@ -80,9 +84,12 @@ export class UserController extends FSController {
     async updateUserByID(): Promise<FSControllerResponse> {
         const userId = this.request.params.id
         const payloadUser = this.request.body
+        const userDTO = new UserOrmDTO<UserDataClass, UserEntity>(payloadUser, UserDataClass, UserEntity, {dtoEntityFieldNames:['firstName', 'lastName', 'age'], partial:true});
+        if(!this.dtoIsValid(userDTO)){
+            return this.response;
+        }
         const usersRepository = new UserTypeOrmRepository(this.appDataSource);
         const updateUserUseCase = new UpdateUserUseCase(usersRepository, this.messageDispatcher);
-        const userDTO = new UserOrmDTO(payloadUser, UserDataClass, User, ['firstName', 'lastName', 'age']);
         try {
             const createdUserDTO = await updateUserUseCase.execute(userId, userDTO);
             const plainObjectResponse = createdUserDTO.validatedData
@@ -95,6 +102,7 @@ export class UserController extends FSController {
             } else {
                 this.response.status = 500;
                 this.response.data = {'detail': 'Internal server error'};
+                this.response.data = {'detail': error.message};
             }
         }
         return this.response;

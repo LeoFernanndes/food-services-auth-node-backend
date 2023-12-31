@@ -9,7 +9,7 @@ import {TokenDTO} from "../../dto/user/TokenDTO";
 import {TokenDataClass} from "../../dto/user/dataClass/TokenDataClass";
 import {UserOrmDTO} from "../../dto/user/UserOrmDTO";
 import {UserDataClass} from "../../dto/user/dataClass/UserDataClass";
-import {User} from "../../entity/User";
+import {UserEntity} from "../../entity/UserEntity";
 import {BaseUseCase} from "../BaseUseCase";
 
 
@@ -17,11 +17,13 @@ config();
 
 
 export class ValidateTokenUseCase extends BaseUseCase implements BaseUseCaseInterface{
+    protected repository: UserTypeOrmRepository;
+
     constructor(repository: UserTypeOrmRepository, messageDispatcher?) {
         super(repository, messageDispatcher)
     }
 
-    async execute(tokenInputDTO: TokenDTO<TokenDataClass>): Promise<UserOrmDTO<UserDataClass, User>> {
+    async execute(tokenInputDTO: TokenDTO<TokenDataClass>): Promise<UserOrmDTO<UserDataClass, UserEntity>> {
         try {
             return TokenEnconder.decode(tokenInputDTO)
         } catch (error){

@@ -1,24 +1,33 @@
 import {BaseDataClass} from "../BaseDataClass";
 import {BaseDTO} from "../BaseDTO";
-import {BaseOrmDTO} from "../BaseOrmDTO";
+import {BaseOrmDTO, BaseOrmDtoOptionalParametersInterface} from "../BaseOrmDTO";
 import bcrypt from "bcrypt";
-import {User} from "../../entity/User";
+import {UserEntity} from "../../entity/UserEntity";
+import {FSBaseEntity} from "../../entity/FSBaseEntity";
 
 
-export class UserOrmDTO<DataClass extends BaseDataClass, Entity> extends BaseOrmDTO<DataClass, Entity>{
-    entityFields = ['id', 'firstName', 'lastName', 'age', 'userName', 'password'];
-    public readonly entity;
+export class UserOrmDTO<DataClass extends BaseDataClass, Entity extends FSBaseEntity> extends BaseOrmDTO<DataClass, Entity>{
 
-    constructor(dataClass: DataClass, dataclassType: {new():DataClass}, entityType: {new():Entity}, allowedFieldNames?: string[]) {
-        super(dataClass, dataclassType, entityType, allowedFieldNames?allowedFieldNames:['id', 'firstName', 'lastName', 'age', 'userName']);
+    protected readonly sensitiveDataFields = ['password'];
+    public readonly entity: UserEntity;
 
-        if (this._allowedFieldNames.includes('password')){
+    constructor(dataClass: DataClass, dataclassType: {new():DataClass}, entityType: {new():Entity}, options?: BaseOrmDtoOptionalParametersInterface) {
+        super(dataClass, dataclassType, entityType,
+            options?.dtoEntityFieldNames?options.dtoEntityFieldNames:['id', 'firstName', 'lastName', 'age', 'username', 'created', 'updated'],
+            options
+            );
+
+        if (this.dtoDataClassFieldNames.includes('password') && this.validatedDataClassFieldNames.includes('password')){
             this.validatedData['password'] = this.hashPassword(this.validatedData['password']);
         }
-        this.entity = this.generateEntity(User);
+        this.entity = this.generateEntity(UserEntity);
     }
 
-    private hashPassword(password: string): string {
+    protected hashPassword(password: string): string {
         return bcrypt.hashSync(password, 15);
+    }
+
+    public getCorrectlyHasedPassword(): string {
+        return this.entity.password
     }
 }

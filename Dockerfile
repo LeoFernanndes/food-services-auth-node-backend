@@ -16,4 +16,4 @@ RUN rm -rf ./src
 
 EXPOSE 3000
 
-ENTRYPOINT ["node", "/usr/src/root/dist/index.js"]
+ENTRYPOINT ["node", "/usr/src/root/dist/src/index.js"]

@@ -11,23 +11,29 @@ import {LoginDataClass} from "../../dto/user/dataClass/LoginDataClass";
 import {BaseUseCase} from "../BaseUseCase";
 import {v4 as uuidV4} from "uuid";
 import {rabbitMQProducer} from "../../index";
+import {UserOrmDTO} from "../../dto/user/UserOrmDTO";
+import {UserDataClass} from "../../dto/user/dataClass/UserDataClass";
+import {UserEntity} from "../../entity/UserEntity";
 
 
 config();
 
 
 export class LoginUserUseCase extends BaseUseCase implements BaseUseCaseInterface{
+    protected repository: UserTypeOrmRepository;
+
     constructor(repository: UserTypeOrmRepository, messageDispatcher?) {
         super(repository, messageDispatcher)
     }
 
     async execute(loginDTO: LoginDTO<LoginDataClass>): Promise<TokenDTO<TokenDataClass>> {
-        const userDTO = await this.repository.getByUsername(loginDTO.validatedData.userName)
+        const userDTO = await this.repository.getByUsername(loginDTO.validatedData.username)
         if (!bcrypt.compareSync(loginDTO.validatedData.password, userDTO.initialData.password)){
             throw new BadRequestException('Invalid user password');
         }
-
-        const tokenDataClass = TokenEnconder.encode(userDTO, 3600).validatedData;
+        const dtoToBeEncoded = new UserOrmDTO(userDTO.validatedData, UserDataClass, UserEntity,
+            {dtoEntityFieldNames: ['id', 'firstName', 'lastName', 'age', 'username'], safe: true})
+        const tokenDataClass = TokenEnconder.encode(dtoToBeEncoded, 3600).validatedData;
         const tokenDTO =  new TokenDTO<TokenDataClass>(tokenDataClass, TokenDataClass);
 
         const rabbitMQMessage = {

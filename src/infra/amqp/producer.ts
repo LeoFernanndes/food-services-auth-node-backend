@@ -20,7 +20,8 @@ const createMQProducer = (amqpUrl: string, queueName: string) => {
             channel.assertExchange(exchange, 'topic', {
                 durable: true
             });
-            channel.assertQueue(process.env.RABBITMQ_AUTH_QUEUE || 'auth', {durable: true})
+
+            channel.assertQueue(queueName, {durable: true})
 
             ch = channel
             exc = exchange
