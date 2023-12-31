@@ -29,7 +29,7 @@ export class LoginUserUseCase extends BaseUseCase implements BaseUseCaseInterfac
     async execute(loginDTO: LoginDTO<LoginDataClass>): Promise<TokenDTO<TokenDataClass>> {
         const userDTO = await this.repository.getByUsername(loginDTO.validatedData.username)
         if (!bcrypt.compareSync(loginDTO.validatedData.password, userDTO.initialData.password)){
-            throw new BadRequestException('Invalid user password');
+            throw new BadRequestException('Invalid username and/or password');
         }
         const dtoToBeEncoded = new UserOrmDTO(userDTO.validatedData, UserDataClass, UserEntity,
             {dtoEntityFieldNames: ['id', 'firstName', 'lastName', 'age', 'username'], safe: true})

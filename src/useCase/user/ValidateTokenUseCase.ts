@@ -11,6 +11,8 @@ import {UserOrmDTO} from "../../dto/user/UserOrmDTO";
 import {UserDataClass} from "../../dto/user/dataClass/UserDataClass";
 import {UserEntity} from "../../entity/UserEntity";
 import {BaseUseCase} from "../BaseUseCase";
+import {RabbitMqMessage} from "../../infra/amqp/RabbitMqMessage";
+import {v4 as uuidV4} from "uuid";
 
 
 config();
@@ -25,7 +27,18 @@ export class ValidateTokenUseCase extends BaseUseCase implements BaseUseCaseInte
 
     async execute(tokenInputDTO: TokenDTO<TokenDataClass>): Promise<UserOrmDTO<UserDataClass, UserEntity>> {
         try {
-            return TokenEnconder.decode(tokenInputDTO)
+            const tokenOutputDTO =  TokenEnconder.decode(tokenInputDTO)
+
+            const rabbitMQMessage = {
+                id: uuidV4().toString(),
+                action: 'authValidateToken',
+                producer: 'auth',
+                data: tokenOutputDTO.validatedData
+            }
+            this.dispatchMessage(rabbitMQMessage)
+
+            return tokenOutputDTO
+
         } catch (error){
             if (error instanceof TokenExpiredError){
                 throw new BadRequestException('Expired token')

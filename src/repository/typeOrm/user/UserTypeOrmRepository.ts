@@ -27,7 +27,7 @@ export class UserTypeOrmRepository extends TypeOrmRepository<UserEntity, UserOrm
     async getByUsername(username: any): Promise<UserOrmDTO<UserDataClass, UserEntity>> {
         const retrievedEntity: UserEntity = await this.repository.findOneBy({username:username})
         if (!retrievedEntity){
-            throw new NotFoundException(`User with username ${username} was not found`);
+            throw new NotFoundException(`Invalid username and/or password`);
         }
         return new UserOrmDTO<UserDataClass, UserEntity>(retrievedEntity, UserDataClass, UserEntity,
             {dtoEntityFieldNames: ['id', 'firstName', 'lastName', 'age', 'username', 'password', 'created', 'updated'], safe:true})
