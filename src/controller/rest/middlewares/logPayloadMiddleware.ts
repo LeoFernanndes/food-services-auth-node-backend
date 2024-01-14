@@ -1,6 +1,4 @@
-import {BaseDataClass} from "../../../dto/BaseDataClass";
 import {NextFunction, Request, RequestHandler, Response} from "express";
-import {validateSync} from "class-validator";
 
 
 export function logPayloadMiddleware(req: Request, res: Response, next: NextFunction){

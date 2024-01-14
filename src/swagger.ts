@@ -11,8 +11,7 @@ const doc = {
       {
         url: 'http://localhost:3000',              // by default: 'http://localhost:3000'
         description: ''       // by default: ''
-      },
-      // { ... }
+      }
     ],
     host: "localhost:3000",
     basePath: "/",
@@ -51,16 +50,7 @@ const doc = {
         Token: {
             token: "eyJhbGciOiJIUzI1NiIkpXVCJ9.eyJkYXRhIjp7ImlkIjoyLCJmaXJzdE5hbWUiOiJmaXJzdCBuYW1lIiwibGFzdE5hbWUiOiJsYXN0IG5hbWUiLzZXJuYW1lMSIsInBhc3N3b3JkIjoiJDJiJDE1JGVHZ3B0ZS5ycFBtazZPRlEvY3lDRWVNWkowOE9DQVY4VXh5SE9vdlAvaWR5aVRpTzN5YnB1In0sImDY5MCwiZXhwIjoxNzAzNzk0MjkwfQ.Zgd-nGQKBuuia8miCrX0UKFvWQPsz-CPqE"
         }
-
     }
-    // tags: [                   // by default: empty Array
-    //   {
-    //     name: '',             // Tag name
-    //     description: ''       // Tag description
-    //   },
-    //   // { ... }
-    // ],
-    // components: {}            // by default: empty object
   };
   
   const outputFile = '../swagger-output.json';

@@ -12,7 +12,7 @@
     }
   ],
   "paths": {
-    "/users/": {
+    "/auth/users/": {
       "post": {
         "description": "Endpoint to create User",
         "responses": {
@@ -54,7 +54,7 @@
         }
       }
     },
-    "/users/{id}": {
+    "/auth/users/{id}": {
       "get": {
         "description": "Endpoint to retrive User",
         "parameters": [
@@ -134,7 +134,7 @@
         }
       }
     },
-    "/users/login": {
+    "/auth/users/login": {
       "post": {
         "description": "Endpoint to login User",
         "responses": {
@@ -164,7 +164,7 @@
         }
       }
     },
-    "/users/validate-token": {
+    "/auth/users/validate-token": {
       "post": {
         "description": "Endpoint to validate User auth token",
         "responses": {
@@ -193,6 +193,16 @@
           }
         }
       }
+    },
+    "/auth/addresses/": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {
@@ -212,7 +222,7 @@
             "type": "number",
             "example": 42
           },
-          "userName": {
+          "username": {
             "type": "string",
             "example": "JohnDoe123"
           },
@@ -237,7 +247,7 @@
             "type": "number",
             "example": 42
           },
-          "userName": {
+          "username": {
             "type": "string",
             "example": "JohnDoe123"
           }
@@ -262,7 +272,7 @@
             "type": "number",
             "example": 42
           },
-          "userName": {
+          "username": {
             "type": "string",
             "example": "JohnDoe123"
           }
@@ -277,7 +287,7 @@
       "Login": {
         "type": "object",
         "properties": {
-          "userName": {
+          "username": {
             "type": "string",
             "example": "JohnDoe123"
           },

@@ -19,7 +19,7 @@ export class TokenEnconder {
     static decode(loginOutputDTO: TokenDTO<TokenDataClass>): UserOrmDTO<UserDataClass, UserEntity> {
         const authData = jsonwebtoken.verify(loginOutputDTO.validatedData.token, JWT_SECRET)
         let returnedUserData: UserDataClass = {
-            id: 0,
+            id: '',
             firstName: '',
             lastName: '',
             age: 0,

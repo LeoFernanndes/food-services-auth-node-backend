@@ -35,7 +35,7 @@ describe("Test UserController Create", () => {
 
         expect(response.status).toEqual(201);
         expect(response.data).toBeInstanceOf(UserDataClass)
-        expect(response.data.id).toBe(1)
+        expect(response.data.id).toContain('user')
         expect(response.data.firstName).toBe(userDataInterface.firstName)
         expect(response.data.lastName).toBe(userDataInterface.lastName)
         expect(response.data.age).toBe(userDataInterface.age)
@@ -76,12 +76,12 @@ describe("Test UserController Update", () => {
             password: 'password'
         }
 
-        const requestUpdate = new FSControllerRequest(updateUserDataInterface, {}, {id: 1}, {});
+        const requestUpdate = new FSControllerRequest(updateUserDataInterface, {}, {id: response.data.id}, {});
         const userControllerUpdate = new UserController(requestUpdate, {appDataSource:dataSource});
         const responseUpdate = await userControllerUpdate.updateUserByID();
         expect(responseUpdate.status).toEqual(200);
         expect(responseUpdate.data).toBeInstanceOf(UserDataClass)
-        expect(responseUpdate.data.id).toBe(1)
+        expect(responseUpdate.data.id).toContain(response.data.id)
         expect(responseUpdate.data.firstName).toBe(updateUserDataInterface.firstName)
         expect(responseUpdate.data.lastName).toBe(updateUserDataInterface.lastName)
         expect(responseUpdate.data.age).toBe(updateUserDataInterface.age)
@@ -131,11 +131,11 @@ describe("Test UserController Update", () => {
             password: 'password'
         }
 
-        const requestUpdate = new FSControllerRequest(updateUserDataInterface, {}, {id: 1}, {});
+        const requestUpdate = new FSControllerRequest(updateUserDataInterface, {}, {id: "notFoundId"}, {});
         const userControllerUpdate = new UserController(requestUpdate, {appDataSource:dataSource});
         const responseUpdate = await userControllerUpdate.updateUserByID();
         expect(responseUpdate.status).toEqual(404);
-        expect(responseUpdate.data).toEqual({ 'detail': 'User with id 1 was not found' });
+        expect(responseUpdate.data).toEqual({ 'detail': 'User with id notFoundId was not found' });
     }, testTimeOut);
 
 });
@@ -223,14 +223,14 @@ describe("Test UserController Retrieve", () => {
         const userController2 = new UserController(request2, {appDataSource:dataSource});
         const response2 = await userController2.createUser();
 
-        const requestRetrieve = new FSControllerRequest({}, {}, {id: 2}, {});
+        const requestRetrieve = new FSControllerRequest({}, {}, {id: response2.data.id}, {});
         const userControllerRetrieve = new UserController(requestRetrieve, {appDataSource:dataSource});
         const responseRetrieve = await userControllerRetrieve.getUserById();
 
         expect(responseRetrieve.status).toEqual(200);
         expect(responseRetrieve.status).toEqual(200);
         expect(responseRetrieve.data).toBeInstanceOf(UserDataClass)
-        expect(responseRetrieve.data.id).toBe(2)
+        expect(responseRetrieve.data.id).toBe(response2.data.id)
         expect(responseRetrieve.data.firstName).toBe(userDataInterface2.firstName)
         expect(responseRetrieve.data.lastName).toBe(userDataInterface2.lastName)
         expect(responseRetrieve.data.age).toBe(userDataInterface2.age)
@@ -238,11 +238,11 @@ describe("Test UserController Retrieve", () => {
     }, testTimeOut);
 
     it("should fail to retrieve user with 404", async () => {
-        const requestUpdate = new FSControllerRequest({}, {}, {id: 1}, {});
+        const requestUpdate = new FSControllerRequest({}, {}, {id: "notFoundId"}, {});
         const userControllerUpdate = new UserController(requestUpdate, {appDataSource:dataSource});
         const responseUpdate = await userControllerUpdate.updateUserByID();
         expect(responseUpdate.status).toEqual(404);
-        expect(responseUpdate.data).toEqual({ 'detail': 'User with id 1 was not found' });
+        expect(responseUpdate.data).toEqual({ 'detail': 'User with id notFoundId was not found' });
     });
 });
 
@@ -283,7 +283,7 @@ describe("Test UserController Delete", () => {
         const userController2 = new UserController(request2, {appDataSource:dataSource});
         const response2 = await userController2.createUser();
 
-        const requestDelete = new FSControllerRequest({}, {}, {id: 2}, {});
+        const requestDelete = new FSControllerRequest({}, {}, {id: response2.data.id}, {});
         const userControllerDelete = new UserController(requestDelete, {appDataSource:dataSource});
         const responseDelete = await userControllerDelete.deleteUserById();
 
@@ -295,10 +295,10 @@ describe("Test UserController Delete", () => {
     }, testTimeOut);
 
     it("should fail to delete user with 404", async () => {
-        const requestDelete = new FSControllerRequest({}, {}, {id: 1}, {});
+        const requestDelete = new FSControllerRequest({}, {}, {id: 'notFoundId'}, {});
         const userControllerDelete = new UserController(requestDelete, {appDataSource:dataSource});
         const responseDelete = await userControllerDelete.updateUserByID();
         expect(responseDelete.status).toEqual(404);
-        expect(responseDelete.data).toEqual({ 'detail': 'User with id 1 was not found' });
+        expect(responseDelete.data).toEqual({ 'detail': 'User with id notFoundId was not found' });
     });
 });

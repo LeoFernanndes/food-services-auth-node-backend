@@ -9,10 +9,11 @@ import createMQProducer from "./infra/amqp/producer";
 import createMQConsumer from "./infra/amqp/consumer";
 import swaggerUi from "swagger-ui-express";
 import  * as swaggerFile from "../swagger-output.json";
+import cors from "cors";
 
 
 AppDataSource.initialize().then(async () => {
-    console.log("Here you can setup and run express / fastify / any other framework.")
+    console.log("AppDataSource successfully loaded.")
 }).catch(error => console.log(error))
 
 
@@ -31,17 +32,19 @@ export const rabbitMQConsumer = createMQConsumer(`amqp://${rabbitMQUser}:${rabbi
 export const rabbitMQProducer = createMQProducer(`amqp://${rabbitMQUser}:${rabbitMQPassword}@${rabbitMQHost}:${rabbitMQPort}`, rabbitMQQueueName);
 
 
+const globalRouter = express.Router()
+globalRouter.use('/users/', UserExpressRouter)
+globalRouter.use('/addresses/', AddressExpressRouter)
+globalRouter.use('/docs/', swaggerUi.serve, swaggerUi.setup(swaggerFile))
+
 rabbitMQConsumer();
+app.use(cors());
 app.use(express.json());
 app.use(logPayloadMiddleware);
-app.use('/users', UserExpressRouter);
-app.use('/addresses', AddressExpressRouter);
-app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
-
+app.use('/auth', globalRouter)
 
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
-
 
 export default app;
