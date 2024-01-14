@@ -3,7 +3,7 @@ import {IsInt, IsOptional, Max, MaxLength, Min} from "class-validator";
 
 
 export class UserDataClass extends BaseDataClass {
-    id?: number;
+    id?: string;
 
     @MaxLength(50)
     firstName?: string;

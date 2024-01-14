@@ -1,7 +1,6 @@
 import {UserDataClass} from "../dataClass/UserDataClass";
 import {UserEntity} from "../../../entity/UserEntity";
 import {UserOrmDTO} from "../UserOrmDTO";
-import {TokenDataClass} from "../dataClass/TokenDataClass";
 
 
 describe('UserDTO right instantiation', () => {
@@ -28,7 +27,7 @@ describe('UserDTO right instantiation', () => {
         expect(userDTO.validatedData).toBeInstanceOf(UserDataClass)
         expect(userDTO.initialData).toEqual(userDataInterface);
 
-        expect(userDTO.entity.id).toBeUndefined();
+        expect(userDTO.entity.id).toBeDefined();
         expect(userDTO.entity.firstName).toEqual(userDTO.validatedData.firstName);
         expect(userDTO.entity.lastName).toEqual(userDTO.validatedData.lastName);
         expect(userDTO.entity.age).toEqual(userDTO.validatedData.age);
@@ -49,7 +48,7 @@ describe('UserDTO right instantiation', () => {
         const userDTO = new UserOrmDTO<UserDataClass, UserEntity>(userDataInterface, UserDataClass, UserEntity,
             {dtoEntityFieldNames: ['firstName', 'lastName', 'age', 'username', 'password', 'created', 'updated']})
 
-        expect(userDTO.entity.id).toBeUndefined();
+        expect(userDTO.entity.id).toBeDefined();
         expect(userDTO.entity.firstName).toEqual(userDTO.validatedData.firstName);
         expect(userDTO.entity.lastName).toEqual(userDTO.validatedData.lastName);
         expect(userDTO.entity.age).toEqual(userDTO.validatedData.age);

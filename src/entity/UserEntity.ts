@@ -1,13 +1,13 @@
-import {Entity, PrimaryGeneratedColumn, Column, Unique} from "typeorm"
-import {BaseEntityInterface} from "./BaseEntityInterface";
+import {Entity, Column, PrimaryColumn, BeforeInsert} from "typeorm";
 import {FSBaseEntity} from "./FSBaseEntity";
+import {v4 as uuidV4} from "uuid";
 
 
 @Entity({name: "user"})
-export class UserEntity extends  FSBaseEntity {
+export class UserEntity extends FSBaseEntity {
 
-    @PrimaryGeneratedColumn()
-    id: number
+    @PrimaryColumn()
+    id: string
 
     @Column({name: "first_name"})
     firstName: string

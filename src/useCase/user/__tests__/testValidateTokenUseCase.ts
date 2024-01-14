@@ -51,7 +51,7 @@ describe("test validate token usecase", () => {
 
         const validateTokenUseCase = new ValidateTokenUseCase(usersRepository);
         const tokenOutputDTO = validateTokenUseCase.execute(loginOutputDTO)
-        expect((await tokenOutputDTO).validatedData.id).toEqual(1)
+        expect((await tokenOutputDTO).validatedData.id).toContain('user')
 
     }, testTimeOut);
 });

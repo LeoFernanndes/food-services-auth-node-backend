@@ -1,5 +1,4 @@
 import {BaseDataClass} from "../BaseDataClass";
-import {BaseDTO} from "../BaseDTO";
 import {BaseOrmDTO, BaseOrmDtoOptionalParametersInterface} from "../BaseOrmDTO";
 import bcrypt from "bcrypt";
 import {UserEntity} from "../../entity/UserEntity";
@@ -20,14 +19,14 @@ export class UserOrmDTO<DataClass extends BaseDataClass, Entity extends FSBaseEn
         if (this.dtoDataClassFieldNames.includes('password') && this.validatedDataClassFieldNames.includes('password')){
             this.validatedData['password'] = this.hashPassword(this.validatedData['password']);
         }
-        this.entity = this.generateEntity(UserEntity);
+        this.entity = this.generateEntity(UserEntity, {idFieldName: 'id', idValuePrefix: 'user'});
     }
 
     protected hashPassword(password: string): string {
         return bcrypt.hashSync(password, 15);
     }
 
-    public getCorrectlyHasedPassword(): string {
+    public getCorrectlyHashedPassword(): string {
         return this.entity.password
     }
 }
